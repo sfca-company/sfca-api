@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class UserController extends AbstractController
 {
  /**
-     * @Route("/users", name="get_user", methods={"GET"})
+     * @Route("/api/users", name="get_user", methods={"GET"})
      */
     public function getUsers(Request $request,UserRepository $userRepo,SerializerInterface $serializer) :JsonResponse
     {
