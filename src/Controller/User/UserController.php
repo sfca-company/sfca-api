@@ -15,9 +15,18 @@ class UserController extends AbstractController
  /**
      * @Route("/api/users", name="get_user", methods={"GET"})
      */
-    public function getUsers(Request $request,UserRepository $userRepo,SerializerInterface $serializer) :JsonResponse
+    public function getUsers(UserRepository $userRepo,SerializerInterface $serializer) :JsonResponse
     {
         $json = $serializer->serialize(['body'=>$userRepo->findAll(),'code'=>Response::HTTP_OK],'json',['groups'=>'user:read']);
+        return new JsonResponse($json,Response::HTTP_OK,[],true);
+    }
+
+    /**
+     * @Route("/api/users/{id}", name="get_user", methods={"GET"})
+     */
+    public function getUserById($id,Request $request,UserRepository $userRepo,SerializerInterface $serializer) :JsonResponse
+    {
+        $json = $serializer->serialize(['body'=>$userRepo->findOneById($id),'code'=>Response::HTTP_OK],'json',['groups'=>'user:read']);
         return new JsonResponse($json,Response::HTTP_OK,[],true);
     }
 }
