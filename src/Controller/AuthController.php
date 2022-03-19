@@ -41,6 +41,6 @@ class AuthController extends AbstractController
         return $this->json([
             "body"=>['user'=>['id'=>$user->getId(),'email'=>$user->getEmail()]],
             "code"=>Response::HTTP_CREATED
-        ]);
+        ],Response::HTTP_CREATED);
     }
 }
