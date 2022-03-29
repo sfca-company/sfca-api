@@ -3,6 +3,9 @@
 namespace App\Entity\Contact;
 
 use App\Entity\Company\Company;
+use App\Entity\Document\Document;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\Contact\ContactRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -43,6 +46,17 @@ class Contact
      * @Groups({"contact:read","contact:write"})
      */
     private $company;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Document::class, mappedBy="contact")
+     * @Groups({"contact:read"})
+     */
+    private $documents;
+
+    public function __construct()
+    {
+        $this->documents = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -93,6 +107,36 @@ class Contact
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Document>
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): self
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents[] = $document;
+            $document->setContact($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(Document $document): self
+    {
+        if ($this->documents->removeElement($document)) {
+            // set the owning side to null (unless already changed)
+            if ($document->getContact() === $this) {
+                $document->setContact(null);
+            }
+        }
 
         return $this;
     }

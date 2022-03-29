@@ -54,7 +54,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/api/contact", name="create_contact", methods={"POST"})
      */
-    public function post(Request $request,CompanyRepository $companyRepository): JsonResponse
+    public function post(Request $request, CompanyRepository $companyRepository): JsonResponse
     {
         $body = json_decode($request->getContent(), true);
         $contact = $this->serializer->deserialize(
@@ -65,7 +65,7 @@ class ContactController extends AbstractController
         );
         if (array_key_exists("company", $body)) {
             $company = $companyRepository->findOneById($body['company']);
-            if(!empty($company)){
+            if (!empty($company)) {
                 $contact->setCompany($company);
             }
         }
@@ -77,7 +77,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/api/contact/{id}",methods={"PUT"}, name="update_contact")
      */
-    public function update($id, Request $request, ContactRepository $contactRepo,CompanyRepository $companyRepo): JsonResponse
+    public function update($id, Request $request, ContactRepository $contactRepo, CompanyRepository $companyRepo): JsonResponse
     {
         try {
             $contact = $contactRepo->findOneBy(["id" => $id]);
@@ -97,7 +97,7 @@ class ContactController extends AbstractController
             );
             if (array_key_exists("company", $body)) {
                 $company = $companyRepo->findOneById($body['company']);
-                if(!empty($company)){
+                if (!empty($company)) {
                     $contact->setCompany($company);
                 }
             }
@@ -109,7 +109,7 @@ class ContactController extends AbstractController
         }
     }
 
-       /**
+    /**
      * @Route("/api/contact/{id}",methods={"DELETE"}, name="delete_contact")
      */
     public function delete($id, ContactRepository $contactRepo): JsonResponse
@@ -122,7 +122,7 @@ class ContactController extends AbstractController
             }
             $this->em->remove($contact);
             $this->em->flush();
-            return new JsonResponse($this->serializer->serialize(['body' => ["$id"=>"$id supprimé contact"], 'code' => Response::HTTP_OK], 'json', ["groups" => "contact:read"]), Response::HTTP_OK, [], true);
+            return new JsonResponse($this->serializer->serialize(['body' => ["$id" => "$id supprimé contact"], 'code' => Response::HTTP_OK], 'json', ["groups" => "contact:read"]), Response::HTTP_OK, [], true);
         } catch (\Exception $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST, [], false);
         }
