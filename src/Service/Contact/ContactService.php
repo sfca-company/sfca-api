@@ -2,9 +2,11 @@
 
 namespace App\Service\Contact;
 
-use App\Entity\Contact\Contact;
 use ErrorException;
 use App\Entity\User;
+use App\Entity\Contact\Contact;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ContactService
 {
@@ -16,17 +18,23 @@ class ContactService
      * @param Contact $contact
      * @return void
      */
-    public function ressourceRightsGetContact(User $user,Contact $contact)
+    public function ressourceRightsGetContact(User $user,Contact $contact) :?JsonResponse
     {
         try {
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
-                return true;
+                return null;
             }
             if ($user->getCompany()->getId() !== $contact->getCompany()->getId()) {
-                throw new ErrorException("contact the administrator, your rights are not sufficient");
+                return new JsonResponse([
+                    'Exception'=>"contact the administrator, your rights are not sufficient",
+                    "code"=>Response::HTTP_BAD_REQUEST
+                ]);
             }
         } catch (\Exception $e) {
-            throw new ErrorException($e->getMessage());
+            return new JsonResponse([
+                'Exception'=>$e->getMessage(),
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
         }
     }
 
@@ -35,10 +43,16 @@ class ContactService
             return true;
         }
         if(!array_key_exists('company',$body)){
-            throw new ErrorException("contact the administrator, your body is incorrect, company is required");
+            return new JsonResponse([
+                'Exception'=>"company in body required",
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
         }
         if ($user->getCompany()->getId() !== $body['company']) {
-            throw new ErrorException("contact the administrator, your rights are not sufficient");
+            return new JsonResponse([
+                'Exception'=>"contact the administrator, your rights are not sufficient",
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
         }
     }
 }

@@ -4,21 +4,29 @@ namespace App\Service\User;
 
 use ErrorException;
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserService
 {
 
-    public function ressourceRightsGetUser(User $user,User $userRequest)
+    public function ressourceRightsGetUser(User $user,User $userRequest): ?JsonResponse
     {
         try {
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
-                return true;
+                return null;
             }
             if ($user->getCompany()->getId() !== $userRequest->getCompany()->getId()) {
-                throw new ErrorException("contact the administrator, your rights are not sufficient");
+                return new JsonResponse([
+                    'Exception'=>"contact the administrator, your rights are not sufficient",
+                    "code"=>Response::HTTP_BAD_REQUEST
+                ]);
             }
         } catch (\Exception $e) {
-            throw new ErrorException($e->getMessage());
+            return new JsonResponse([
+                'Exception'=>$e->getMessage(),
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
         }
     }
 }

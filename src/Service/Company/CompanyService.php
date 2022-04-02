@@ -6,6 +6,8 @@ use ErrorException;
 use App\Entity\User;
 use App\Entity\Company\Company;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CompanyService
 {
@@ -13,36 +15,47 @@ class CompanyService
 
     private $em;
 
-
     public function __construct(
         EntityManagerInterface $em
     ) {
         $this->em = $em;
     }
 
-    public function ressourceRightsAdmin(User $user)
+    public function ressourceRightsAdmin(User $user) :?JsonResponse
     {
         try {
             if (!in_array(User::ROLE_ADMIN, $user->getRoles())) {
-                throw new ErrorException("contact the administrator, your rights are not sufficient");
+                return new JsonResponse([
+                    'Exception'=>"contact the administrator, your rights are not sufficient",
+                    "code"=>Response::HTTP_BAD_REQUEST
+                ]);
             }
         } catch (\Exception $e) {
-            throw new ErrorException($e->getMessage());
+            return new JsonResponse([
+                'Exception'=>$e->getMessage(),
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
         }
     }
 
-    public function ressourceRightsGetCompany(User $user, Company $company)
+    public function ressourceRightsGetCompany(User $user, Company $company) :?JsonResponse
     {
         try {
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
-                return true;
+                return null;
             }
 
             if ($user->getCompany()->getId() !== $company->getId()) {
-                throw new ErrorException("contact the administrator, your rights are not sufficient");
+                return new JsonResponse([
+                    'Exception'=>"contact the administrator, your rights are not sufficient",
+                    "code"=>Response::HTTP_BAD_REQUEST
+                ]);
             }
         } catch (\Exception $e) {
-            throw new ErrorException($e->getMessage());
+            return new JsonResponse([
+                'Exception'=>$e->getMessage(),
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
         }
     }
 }

@@ -42,7 +42,10 @@ class ContactController extends AbstractController
      */
     public function getAll(ContactRepository $contactRepo): JsonResponse
     {
-        $this->securityService->ressourceRightsAdmin($this->getUser());
+        $errors = $this->securityService->ressourceRightsAdmin($this->getUser());
+        if($errors instanceof JsonResponse){
+            return $errors;
+        }
         $json = $this->serializer->serialize(['body' => $contactRepo->findAll(), 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -57,7 +60,10 @@ class ContactController extends AbstractController
             array_push($this->errors['errors'], ['id' => 'contact not found']);
             return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
         }
-        $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+        $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+        if($errors instanceof JsonResponse){
+            return $errors;
+        }
         $json = $this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -133,7 +139,10 @@ class ContactController extends AbstractController
                 $this->errors['errors'][] = ["contact" => "contact not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+            if($errors instanceof JsonResponse){
+                return $errors;
+            }
             $this->em->remove($contact);
             $this->em->flush();
             return new JsonResponse($this->serializer->serialize(['body' => ["$id" => "$id supprimé contact"], 'code' => Response::HTTP_OK], 'json', ["groups" => "contact:read"]), Response::HTTP_OK, [], true);

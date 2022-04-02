@@ -29,7 +29,10 @@ class UserController extends AbstractController
      */
     public function getUsers(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
     {
-        $this->securityService->ressourceRightsAdmin($this->getUser());
+        $errors = $this->securityService->ressourceRightsAdmin($this->getUser());
+        if($errors instanceof JsonResponse){
+            return $errors;
+        }
         $json = $serializer->serialize(['body' => $userRepo->findAll(), 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -39,6 +42,10 @@ class UserController extends AbstractController
      */
     public function getUserById($id, Request $request, UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
     {
+        $errors = $this->userService->ressourceRightsGetUser($this->getUser(),$userRepo->findOneById($id));
+        if($errors instanceof JsonResponse){
+            return $errors;
+        }
         $json = $serializer->serialize(['body' => $userRepo->findOneById($id), 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }

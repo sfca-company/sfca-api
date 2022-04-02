@@ -16,7 +16,7 @@ class HomeController extends AbstractController
         return $this->json([
             'data' => 'Welcome to api sfca',
             'code' => Response::HTTP_OK,
-            'version'=>'0.1.0'
+            'version'=>'0.1.1'
         ]);
     }
 }

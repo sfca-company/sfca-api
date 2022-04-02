@@ -49,7 +49,10 @@ class DocumentController extends AbstractController
             if (empty($contact)) {
                 $this->errors['errors'][] = ["id" => "contact not found"];
             }
-            $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+            if($errors instanceof JsonResponse){
+                return $errors;
+            }
             $body = json_decode($request->getContent(), true);
 
             $errors = $this->documentService->validator($body);
@@ -77,7 +80,10 @@ class DocumentController extends AbstractController
             if (empty($document)) {
                 $this->errors['errors'][] = ["id" => "document not found"];
             }
-            $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
+            if($errors instanceof JsonResponse){
+                return $errors;
+            }
             $base64 = $this->documentService->searchFile($document);
             $json = $this->serializer->serialize(['body' => $base64, 'code' => Response::HTTP_OK], 'json', ['groups' => 'document:read']);
             return new JsonResponse($json, Response::HTTP_OK, [], true);
@@ -97,7 +103,10 @@ class DocumentController extends AbstractController
                 $this->errors['errors'][] = ["document" => "document not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
+            if($errors instanceof JsonResponse){
+                return $errors;
+            }
             unlink($document->getUrl());
             $this->em->remove($document);
             $this->em->flush();

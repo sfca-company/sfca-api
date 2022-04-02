@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\Company\CompanyRepository;
 use App\Service\Company\CompanyService;
+use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,16 +22,19 @@ class AddUsersController extends AbstractController
     private $serializer;
     private $errors;
     private $companyService;
+    private $securityService;
 
     public function __construct(
         EntityManagerInterface $em,
         SerializerInterface $serializer,
-        CompanyService $companyService
+        CompanyService $companyService,
+        SecurityService $securityService
     ) {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST];
         $this->companyService = $companyService;
+        $this->securityService = $securityService;
     }
 
     /**
@@ -51,7 +55,10 @@ class AddUsersController extends AbstractController
             if (count($this->errors['errors']) > 0) {
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $this->companyService->ressourceRightsAdmin($this->getUser(),$company);
+            $errors = $this->securityService->ressourceRightsAdmin($this->getUser());
+            if($errors instanceof JsonResponse){
+                return $errors;
+            }
             $idsUsers = $body['users'];
             $users = $userRepo->findBy(["id" => $idsUsers]);
             $company->getUsers()->clear();
