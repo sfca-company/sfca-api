@@ -24,6 +24,12 @@ class ContactService
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
                 return null;
             }
+            if(empty($user->getCompany()) ){
+                return new JsonResponse([
+                    'Exception'=>"contact the administrator, not company associed",
+                    "code"=>Response::HTTP_BAD_REQUEST
+                ]);
+            }
             if ($user->getCompany()->getId() !== $contact->getCompany()->getId()) {
                 return new JsonResponse([
                     'Exception'=>"contact the administrator, your rights are not sufficient",
@@ -45,6 +51,12 @@ class ContactService
         if(!array_key_exists('company',$body)){
             return new JsonResponse([
                 'Exception'=>"company in body required",
+                "code"=>Response::HTTP_BAD_REQUEST
+            ]);
+        }
+        if(empty($user->getCompany()) ){
+            return new JsonResponse([
+                'Exception'=>"contact the administrator, not company associed",
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }

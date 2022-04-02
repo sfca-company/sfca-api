@@ -42,11 +42,15 @@ class UserController extends AbstractController
      */
     public function getUserById($id, Request $request, UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
     {
-        $errors = $this->userService->ressourceRightsGetUser($this->getUser(),$userRepo->findOneById($id));
+        $user = $userRepo->findOneById($id);
+        if(empty($user)){
+            return new JsonResponse(['errors'=>['user'=>'user not found'],"code"=>400],Response::HTTP_BAD_REQUEST,[],false);
+        }
+        $errors = $this->userService->ressourceRightsGetUser($this->getUser(),$user);
         if($errors instanceof JsonResponse){
             return $errors;
         }
-        $json = $serializer->serialize(['body' => $userRepo->findOneById($id), 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
+        $json = $serializer->serialize(['body' =>$user, 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 }

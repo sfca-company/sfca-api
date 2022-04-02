@@ -86,7 +86,10 @@ class ContactController extends AbstractController
                 $contact->setCompany($company);
             }
         }
-        $this->contactService->validator($this->getUser(),$body);
+        $errors = $this->contactService->validator($this->getUser(),$body);
+        if($errors instanceof JsonResponse){
+            return $errors;
+        }
         $this->em->persist($contact);
         $this->em->flush();
         return new JsonResponse($this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_CREATED], 'json', ["groups" => "contact:read"]), Response::HTTP_CREATED, [], true);
@@ -119,7 +122,10 @@ class ContactController extends AbstractController
                     $contact->setCompany($company);
                 }
             }
-            $this->contactService->validator($this->getUser(),$body);
+            $errors = $this->contactService->validator($this->getUser(),$body);
+            if($errors instanceof JsonResponse){
+                return $errors;
+            }
             $this->em->persist($contact);
             $this->em->flush();
             return new JsonResponse($this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_OK], 'json', ["groups" => "contact:read"]), Response::HTTP_OK, [], true);
