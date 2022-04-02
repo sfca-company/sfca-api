@@ -13,6 +13,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const ROLE_PROSPECT = "ROLE_PROSPECT";
+    const ROLE_ADMIN = "ROLE_ADMIN";
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

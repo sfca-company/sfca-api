@@ -4,8 +4,10 @@ namespace App\Controller\Company;
 
 use App\Entity\Company\Company;
 use App\Repository\UserRepository;
+use App\Service\Company\CompanyService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\Company\CompanyRepository;
+use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,20 +21,27 @@ class CompanyController extends AbstractController
     private $em;
     private $serializer;
     private $errors;
+    private $companyService;
+    private $securityService;
 
     public function __construct(
         EntityManagerInterface $em,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        CompanyService $companyService,
+        SecurityService $securityService
     ) {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST];
+        $this->companyService = $companyService;
+        $this->securityService = $securityService;
     }
     /**
      * @Route("/api/company", name="get_companys", methods={"GET"})
      */
     public function getAll(CompanyRepository $companyRepo): JsonResponse
     {
+        $this->securityService->ressourceRightsAdmin($this->getUser());
         $json = $this->serializer->serialize(['body' => $companyRepo->findAll(), 'code' => Response::HTTP_OK], 'json', ['groups' => 'company:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -47,6 +56,7 @@ class CompanyController extends AbstractController
             array_push($this->errors['errors'], ['id' => 'company not found']);
             return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
         }
+        $this->companyService->ressourceRightsGetCompany($this->getUser(),$company);
         $json = $this->serializer->serialize(['body' => $company, 'code' => Response::HTTP_OK], 'json', ['groups' => 'company:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -56,6 +66,7 @@ class CompanyController extends AbstractController
      */
     public function post(Request $request): JsonResponse
     {
+        $this->securityService->ressourceRightsAdmin($this->getUser());
         $company = $this->serializer->deserialize(
             $request->getContent(),
             Company::class,
@@ -78,6 +89,7 @@ class CompanyController extends AbstractController
                 $this->errors['errors'][] = ["id" => "company not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
+            $this->companyService->ressourceRightsGetCompany($this->getUser(),$company);
             $company = $this->serializer->deserialize(
                 $request->getContent(),
                 Company::class,
@@ -106,6 +118,7 @@ class CompanyController extends AbstractController
                 $this->errors['errors'][] = ["company" => "company not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
+            $this->securityService->ressourceRightsAdmin($this->getUser());
             $this->em->remove($company);
             $this->em->flush();
             return new JsonResponse($this->serializer->serialize(['body' => ["$id"=>"$id supprimé company"], 'code' => Response::HTTP_OK], 'json', ["groups" => "company:read"]), Response::HTTP_OK, [], true);
