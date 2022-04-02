@@ -8,6 +8,12 @@ use App\Entity\User;
 class SecurityService
 {
 
+    /**
+     * Permet de vérifier si l'user à le droit admin
+     *
+     * @param User $user
+     * @return void
+     */
     public function ressourceRightsAdmin(User $user)
     {
         try {

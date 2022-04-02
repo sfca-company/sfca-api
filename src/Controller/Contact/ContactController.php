@@ -3,8 +3,10 @@
 namespace App\Controller\Contact;
 
 use App\Entity\Contact\Contact;
-use App\Repository\Company\CompanyRepository;
+use App\Service\Contact\ContactService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Security\SecurityService;
+use App\Repository\Company\CompanyRepository;
 use App\Repository\Contact\ContactRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,20 +21,28 @@ class ContactController extends AbstractController
     private $em;
     private $serializer;
     private $errors;
+    private $securityService;
+    private $contactService;
+
 
     public function __construct(
         EntityManagerInterface $em,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        SecurityService $securityService,
+        ContactService $contactService
     ) {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST];
+        $this->securityService = $securityService;
+        $this->contactService = $contactService;
     }
     /**
      * @Route("/api/contact", name="get_all_contact", methods={"GET"})
      */
     public function getAll(ContactRepository $contactRepo): JsonResponse
     {
+        $this->securityService->ressourceRightsAdmin($this->getUser());
         $json = $this->serializer->serialize(['body' => $contactRepo->findAll(), 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -47,6 +57,7 @@ class ContactController extends AbstractController
             array_push($this->errors['errors'], ['id' => 'contact not found']);
             return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
         }
+        $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
         $json = $this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
@@ -69,6 +80,7 @@ class ContactController extends AbstractController
                 $contact->setCompany($company);
             }
         }
+        $this->contactService->validator($this->getUser(),$body);
         $this->em->persist($contact);
         $this->em->flush();
         return new JsonResponse($this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_CREATED], 'json', ["groups" => "contact:read"]), Response::HTTP_CREATED, [], true);
@@ -101,6 +113,7 @@ class ContactController extends AbstractController
                     $contact->setCompany($company);
                 }
             }
+            $this->contactService->validator($this->getUser(),$body);
             $this->em->persist($contact);
             $this->em->flush();
             return new JsonResponse($this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_OK], 'json', ["groups" => "contact:read"]), Response::HTTP_OK, [], true);
@@ -120,6 +133,7 @@ class ContactController extends AbstractController
                 $this->errors['errors'][] = ["contact" => "contact not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
+            $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
             $this->em->remove($contact);
             $this->em->flush();
             return new JsonResponse($this->serializer->serialize(['body' => ["$id" => "$id supprimé contact"], 'code' => Response::HTTP_OK], 'json', ["groups" => "contact:read"]), Response::HTTP_OK, [], true);
