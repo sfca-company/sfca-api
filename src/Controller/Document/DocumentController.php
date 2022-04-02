@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\Company\CompanyRepository;
 use App\Repository\Contact\ContactRepository;
 use App\Repository\Document\DocumentRepository;
+use App\Service\Contact\ContactService;
 use App\Service\Document\DocumentService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,16 +24,19 @@ class DocumentController extends AbstractController
     private $serializer;
     private $errors;
     private $documentService;
+    private $contactService;
 
     public function __construct(
         EntityManagerInterface $em,
         SerializerInterface $serializer,
-        DocumentService $documentService
+        DocumentService $documentService,
+        ContactService $contactService
     ) {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST];
         $this->documentService = $documentService;
+        $this->contactService = $contactService;
     }
 
     /**
@@ -45,6 +49,7 @@ class DocumentController extends AbstractController
             if (empty($contact)) {
                 $this->errors['errors'][] = ["id" => "contact not found"];
             }
+            $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
             $body = json_decode($request->getContent(), true);
 
             $errors = $this->documentService->validator($body);
@@ -72,6 +77,7 @@ class DocumentController extends AbstractController
             if (empty($document)) {
                 $this->errors['errors'][] = ["id" => "document not found"];
             }
+            $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
             $base64 = $this->documentService->searchFile($document);
             $json = $this->serializer->serialize(['body' => $base64, 'code' => Response::HTTP_OK], 'json', ['groups' => 'document:read']);
             return new JsonResponse($json, Response::HTTP_OK, [], true);
@@ -91,6 +97,7 @@ class DocumentController extends AbstractController
                 $this->errors['errors'][] = ["document" => "document not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
+            $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
             unlink($document->getUrl());
             $this->em->remove($document);
             $this->em->flush();
