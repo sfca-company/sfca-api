@@ -25,6 +25,7 @@ class SecurityService
                     "code"=>Response::HTTP_BAD_REQUEST
                 ]);
             }
+            return null;
         } catch (\Exception $e) {
             return new JsonResponse([
                 'Exception'=>$e->getMessage(),
