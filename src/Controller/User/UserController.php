@@ -42,10 +42,6 @@ class UserController extends AbstractController
      */
     public function getInfoUserConnect(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
     {
-        $errors = $this->securityService->ressourceRightsAdmin($this->getUser());
-        if($errors instanceof JsonResponse){
-            return $errors;
-        }
         $json = $serializer->serialize(['body' => $this->getUser(), 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
