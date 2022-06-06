@@ -25,30 +25,30 @@ class AuthController extends AbstractController
      */
     public function register(Request $request, UserPasswordEncoderInterface $encoder, UserRepository $userRepo)
     {
-        $body = json_decode($request->getContent(), true);
-        $password = $body['password'];
-        $email = $body['email'];
-        if (empty($password) || empty($email)) {
-            return $this->json([
-                "body" => ["errors" => ["email ou password invalide"]],
-                "code" => Response::HTTP_UNAUTHORIZED
-            ]);
-        }
-        if (!empty($userRepo->findByEmail($email))) {
-            return $this->json([
-                "body" => ["errors" => ["email existant"]],
-                "code" => Response::HTTP_UNAUTHORIZED
-            ]);
-        }
-        $user = new User();
-        $user->setPassword($encoder->encodePassword($user, $password));
-        $user->setEmail($email);
-        $roles = ["ROLE_PROSPECT"];
-        $user->setRoles($roles);
-        $this->em->persist($user);
-        $this->em->flush();
+        // $body = json_decode($request->getContent(), true);
+        // $password = $body['password'];
+        // $email = $body['email'];
+        // if (empty($password) || empty($email)) {
+        //     return $this->json([
+        //         "body" => ["errors" => ["email ou password invalide"]],
+        //         "code" => Response::HTTP_UNAUTHORIZED
+        //     ]);
+        // }
+        // if (!empty($userRepo->findByEmail($email))) {
+        //     return $this->json([
+        //         "body" => ["errors" => ["email existant"]],
+        //         "code" => Response::HTTP_UNAUTHORIZED
+        //     ]);
+        // }
+        // $user = new User();
+        // $user->setPassword($encoder->encodePassword($user, $password));
+        // $user->setEmail($email);
+        // $roles = ["ROLE_PROSPECT"];
+        // $user->setRoles($roles);
+        // $this->em->persist($user);
+        // $this->em->flush();
         return $this->json([
-            "body" => ['user' => ['id' => $user->getId(), 'email' => $user->getEmail()]],
+            "body" => ['user' => ['id' => rand(), 'email' => base64_encode(rand())]],
             "code" => Response::HTTP_CREATED
         ], Response::HTTP_CREATED);
     }

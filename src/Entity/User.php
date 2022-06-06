@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Company\Company;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -19,22 +21,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user:read","company:read"})
+     * @Groups({"user:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"user:read","company:read"})
+     * @Groups({"user:read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"user:read","company:read"})
+     * @Groups({"user:read"})
      */
     private $roles = [];
-
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
@@ -42,10 +43,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="users")
+     * @ORM\ManyToMany(targetEntity=Company::class, inversedBy="users")
      * @Groups({"user:read"})
      */
-    private $company;
+    private $companies;
+
+    public function __construct()
+    {
+        $this->companies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,14 +142,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getCompany(): ?Company
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
     {
-        return $this->company;
+        return $this->companies;
     }
 
-    public function setCompany(?Company $company): self
+    public function addCompany(Company $company): self
     {
-        $this->company = $company;
+        if (!$this->companies->contains($company)) {
+            $this->companies[] = $company;
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): self
+    {
+        $this->companies->removeElement($company);
 
         return $this;
     }

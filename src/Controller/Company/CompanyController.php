@@ -37,7 +37,7 @@ class CompanyController extends AbstractController
         $this->securityService = $securityService;
     }
     /**
-     * @Route("/api/company", name="get_companys", methods={"GET"})
+     * @Route("/api/companies", name="get_companys", methods={"GET"})
      */
     public function getAll(CompanyRepository $companyRepo): JsonResponse
     {
@@ -50,7 +50,7 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * @Route("/api/company/{id}", name="get_company", methods={"GET"})
+     * @Route("/api/companies/{id}", name="get_company", methods={"GET"})
      */
     public function getOne(CompanyRepository $companyRepo, $id): JsonResponse
     {
@@ -68,7 +68,7 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * @Route("/api/company", name="create_company", methods={"POST"})
+     * @Route("/api/companies", name="create_company", methods={"POST"})
      */
     public function post(Request $request): JsonResponse
     {
@@ -88,7 +88,7 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * @Route("/api/company/{id}",methods={"PUT"}, name="update_company")
+     * @Route("/api/companies/{id}",methods={"PUT"}, name="update_company")
      */
     public function update($id, Request $request, CompanyRepository $companyRepo): JsonResponse
     {
@@ -120,7 +120,7 @@ class CompanyController extends AbstractController
     }
 
        /**
-     * @Route("/api/company/{id}",methods={"DELETE"}, name="delete_company")
+     * @Route("/api/companies/{id}",methods={"DELETE"}, name="delete_company")
      */
     public function delete($id, CompanyRepository $companyRepo): JsonResponse
     {

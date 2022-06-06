@@ -2,6 +2,7 @@
 
 namespace App\Controller\User;
 
+use App\Repository\Company\CompanyRepository;
 use App\Repository\UserRepository;
 use App\Service\Security\SecurityService;
 use App\Service\User\UserService;
@@ -60,6 +61,20 @@ class UserController extends AbstractController
             return $errors;
         }
         $json = $serializer->serialize(['body' =>$user, 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
+    }
+
+        /**
+     * @Route("/api/users/companies/{idCompany}", name="get_user", methods={"GET"})
+     */
+    public function getUserByCompanies(?int $idCompany, Request $request, UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
+    {
+        $users = $userRepo->findByCompany($idCompany);
+       // $errors = $this->userService->ressourceRightsGetUser($this->getUser(),$user);
+        // if($errors instanceof JsonResponse){
+        //     return $errors;
+        // }
+        $json = $serializer->serialize(['body' =>$users, 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 }

@@ -30,21 +30,20 @@ class Company
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="company")
-     * @Groups({"company:read"})
-     */
-    private $users;
-
-    /**
      * @ORM\OneToMany(targetEntity=Contact::class, mappedBy="company")
      * @Groups({"company:read"})
      */
     private $contacts;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="companies")
+     */
+    private $users;
+
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->contacts = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -60,36 +59,6 @@ class Company
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->setCompany($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getCompany() === $this) {
-                $user->setCompany(null);
-            }
-        }
 
         return $this;
     }
@@ -119,6 +88,33 @@ class Company
             if ($contact->getCompany() === $this) {
                 $contact->setCompany(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeCompany($this);
         }
 
         return $this;
