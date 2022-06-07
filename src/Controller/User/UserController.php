@@ -65,7 +65,7 @@ class UserController extends AbstractController
     }
 
         /**
-     * @Route("/api/users/companies/{idCompany}", name="get_user", methods={"GET"})
+     * @Route("/api/users/companies/{idCompany}", name="get_user_by_companies", methods={"GET"})
      */
     public function getUserByCompanies(?int $idCompany, Request $request, UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
     {
