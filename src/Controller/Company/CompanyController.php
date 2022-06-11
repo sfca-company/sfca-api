@@ -99,8 +99,12 @@ class CompanyController extends AbstractController
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
             $errors = $this->companyService->ressourceRightsGetCompany($this->getUser(),$company);
+            $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
             if($errors instanceof JsonResponse){
                 return $errors;
+            }
+            if($errorsProspect instanceof JsonResponse){
+                return $errorsProspect;
             }
             $company = $this->serializer->deserialize(
                 $request->getContent(),

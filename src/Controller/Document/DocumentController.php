@@ -10,6 +10,7 @@ use App\Repository\Contact\ContactRepository;
 use App\Repository\Document\DocumentRepository;
 use App\Service\Contact\ContactService;
 use App\Service\Document\DocumentService;
+use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,18 +26,21 @@ class DocumentController extends AbstractController
     private $errors;
     private $documentService;
     private $contactService;
+    private $securityService;
 
     public function __construct(
         EntityManagerInterface $em,
         SerializerInterface $serializer,
         DocumentService $documentService,
-        ContactService $contactService
+        ContactService $contactService,
+        SecurityService $securityService
     ) {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST];
         $this->documentService = $documentService;
         $this->contactService = $contactService;
+        $this->securityService = $securityService;
     }
 
     /**
@@ -62,6 +66,10 @@ class DocumentController extends AbstractController
             if (count($this->errors['errors']) > 0) {
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
+            $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+            if($errorsProspect instanceof JsonResponse){
+                return $errorsProspect;
+            }
             $document = $this->documentService->create($body, $contact);
             $json = $this->serializer->serialize(['body' => $document, 'code' => Response::HTTP_OK], 'json', ['groups' => 'document:read']);
             return new JsonResponse($json, Response::HTTP_OK, [], true);
@@ -83,6 +91,10 @@ class DocumentController extends AbstractController
             $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
             if($errors instanceof JsonResponse){
                 return $errors;
+            }
+            $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+            if($errorsProspect instanceof JsonResponse){
+                return $errorsProspect;
             }
             $base64 = $this->documentService->searchFile($document);
             $json = $this->serializer->serialize(['body' => $base64, 'code' => Response::HTTP_OK], 'json', ['groups' => 'document:read']);
@@ -106,6 +118,10 @@ class DocumentController extends AbstractController
             $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
             if($errors instanceof JsonResponse){
                 return $errors;
+            }
+            $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+            if($errorsProspect instanceof JsonResponse){
+                return $errorsProspect;
             }
             unlink($document->getUrl());
             $this->em->remove($document);

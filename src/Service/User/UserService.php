@@ -14,18 +14,25 @@ class UserService
     const ROLE_ADMIN = "ROLE_ADMIN";
     const ROLE_CLIENT = "ROLE_CLIENT";
 
-    const ARRAY_ROLES = [UserService::ROLE_PROSPECT,UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
+    const ARRAY_ROLES = [UserService::ROLE_PROSPECT, UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
 
     public function ressourceRightsGetUser(User $user, User $userRequest): ?JsonResponse
     {
         try {
+            // Si l'utilisateur est un admin alors pas besoin de controler 
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
                 return null;
             }
-            if (empty($user->getCompany())) {
+            $companiesUserConnect = $user->getCompanies();
+            $compagniesUserRequest = $userRequest->getCompanies();
+            $checkCompaniesUserConnectToUserRequest = false;
+
+            if (empty($companiesUserConnect)) {
+                // Si l'utilisateur connecté n'as pas de compagnies alors on controle si il requete uniquement son user
                 if ($user->getId() !== $userRequest->getId()) {
                     return new JsonResponse([
-                        'Exception' => "contact the administrator, your rights are not sufficient",
+                        'exception' => "contact the administrator, your rights are not sufficient",
+                        'errors' => ["user" => "user !== user request"],
                         "code" => Response::HTTP_BAD_REQUEST
                     ]);
                 } else {
@@ -33,20 +40,33 @@ class UserService
                 }
             }
 
-            if (empty($userRequest->getCompany())) {
-                return null;
+            if (!empty($companiesUserConnect) && !empty($compagniesUserRequest)) {
+                // On match si l'utilisateur connecté à la même compagnies que l'utilisateur qu'il requête
+                foreach ($compagniesUserRequest as $companyUserRequest) {
+                    foreach ($companiesUserConnect as $companyUserConnect) {
+                        if ($checkCompaniesUserConnectToUserRequest === true) {
+                            break;
+                        }
+                        if ($companyUserConnect === $companyUserRequest) {
+                            $checkCompaniesUserConnectToUserRequest = true;
+                            break;
+                        }
+                    }
+                }
             }
-            if ($user->getCompany()->getId() !== $userRequest->getCompany()->getId()) {
+            // Si l'utilisateur connecté ne possede pas les meme companies que l'utilisateur requete alors errors
+            if ($checkCompaniesUserConnectToUserRequest === false) {
 
                 return new JsonResponse([
-                    'Exception' => "contact the administrator, your rights are not sufficient",
+                    'exception' => "contact the administrator, your rights are not sufficient",
+                    'errors' => ['user' => "checkCompaniesUserConnectToUserRequest is false"],
                     "code" => Response::HTTP_BAD_REQUEST
                 ]);
             }
             return null;
         } catch (\Exception $e) {
             return new JsonResponse([
-                'Exception' => $e->getMessage(),
+                'exception' => $e->getMessage(),
                 "code" => Response::HTTP_BAD_REQUEST
             ]);
         }

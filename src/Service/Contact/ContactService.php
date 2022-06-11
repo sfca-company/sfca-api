@@ -24,21 +24,35 @@ class ContactService
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
                 return null;
             }
-            if(empty($user->getCompany()) ){
+            $companiesUserConnect = $user->getCompanies();
+            $checkCompaniesUserConnectToContactRequest = false;
+            $company = $contact->getCompany();
+            if(empty($companiesUserConnect) ){
                 return new JsonResponse([
-                    'Exception'=>"contact the administrator, not company associed",
+                    'exception'=>"contact the administrator, not company associed",
+                    'errors' => ["compagnies" => "user connect not have companies"],
                     "code"=>Response::HTTP_BAD_REQUEST
                 ]);
             }
-            if ($user->getCompany()->getId() !== $contact->getCompany()->getId()) {
+            foreach($companiesUserConnect as $companyUserConnect){
+                if ($checkCompaniesUserConnectToContactRequest === true) {
+                    break;
+                }
+
+                if ($companyUserConnect === $company) {
+                    $checkCompaniesUserConnectToContactRequest = true;
+                }
+            }
+            if ($checkCompaniesUserConnectToContactRequest === false) {
                 return new JsonResponse([
-                    'Exception'=>"contact the administrator, your rights are not sufficient",
+                    'exception'=>"contact the administrator, your rights are not sufficient",
+                    'errors' => ['user' => "checkCompaniesUserConnectToContactRequest is false"],
                     "code"=>Response::HTTP_BAD_REQUEST
                 ]);
             }
         } catch (\Exception $e) {
             return new JsonResponse([
-                'Exception'=>$e->getMessage(),
+                'exception'=>$e->getMessage(),
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }

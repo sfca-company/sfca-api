@@ -61,6 +61,10 @@ class ContactController extends AbstractController
             return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
         }
         $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+        $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+        if($errorsProspect instanceof JsonResponse){
+            return $errorsProspect;
+        }
         if($errors instanceof JsonResponse){
             return $errors;
         }
@@ -87,6 +91,10 @@ class ContactController extends AbstractController
             }
         }
         $errors = $this->contactService->validator($this->getUser(),$body);
+        $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+        if($errorsProspect instanceof JsonResponse){
+            return $errorsProspect;
+        }
         if($errors instanceof JsonResponse){
             return $errors;
         }
@@ -123,6 +131,10 @@ class ContactController extends AbstractController
                 }
             }
             $errors = $this->contactService->validator($this->getUser(),$body);
+            $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+            if($errorsProspect instanceof JsonResponse){
+                return $errorsProspect;
+            }
             if($errors instanceof JsonResponse){
                 return $errors;
             }
@@ -146,6 +158,10 @@ class ContactController extends AbstractController
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
             $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+            $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+            if($errorsProspect instanceof JsonResponse){
+                return $errorsProspect;
+            }
             if($errors instanceof JsonResponse){
                 return $errors;
             }
