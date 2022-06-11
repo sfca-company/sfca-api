@@ -53,8 +53,8 @@ class DocumentController extends AbstractController
             if (empty($contact)) {
                 $this->errors['errors'][] = ["id" => "contact not found"];
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
-            if($errors instanceof JsonResponse){
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $contact);
+            if ($errors instanceof JsonResponse) {
                 return $errors;
             }
             $body = json_decode($request->getContent(), true);
@@ -67,7 +67,7 @@ class DocumentController extends AbstractController
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-            if($errorsProspect instanceof JsonResponse){
+            if ($errorsProspect instanceof JsonResponse) {
                 return $errorsProspect;
             }
             $document = $this->documentService->create($body, $contact);
@@ -86,14 +86,23 @@ class DocumentController extends AbstractController
         try {
             $document = $documentRepository->findOneBy(["id" => $id]);
             if (empty($document)) {
-                $this->errors['errors'][] = ["id" => "document not found"];
+                return new JsonResponse(
+                    [
+                        'exception'=>"",
+                        'errors'=>["document not found"],
+                        "code"=>  Response::HTTP_BAD_REQUEST
+                    ],
+                    Response::HTTP_BAD_REQUEST,
+                    [],
+                    false
+                );
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
-            if($errors instanceof JsonResponse){
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $document->getContact());
+            if ($errors instanceof JsonResponse) {
                 return $errors;
             }
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-            if($errorsProspect instanceof JsonResponse){
+            if ($errorsProspect instanceof JsonResponse) {
                 return $errorsProspect;
             }
             $base64 = $this->documentService->searchFile($document);
@@ -104,7 +113,7 @@ class DocumentController extends AbstractController
         }
     }
 
-        /**
+    /**
      * @Route("/api/document/{id}",methods={"DELETE"}, name="delete_document")
      */
     public function delete($id, DocumentRepository $documentRepository): JsonResponse
@@ -115,12 +124,12 @@ class DocumentController extends AbstractController
                 $this->errors['errors'][] = ["document" => "document not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$document->getContact());
-            if($errors instanceof JsonResponse){
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $document->getContact());
+            if ($errors instanceof JsonResponse) {
                 return $errors;
             }
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-            if($errorsProspect instanceof JsonResponse){
+            if ($errorsProspect instanceof JsonResponse) {
                 return $errorsProspect;
             }
             unlink($document->getUrl());

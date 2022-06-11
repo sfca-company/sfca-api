@@ -50,7 +50,7 @@ class CompanyController extends AbstractController
     }
 
     /**
-     * @Route("/api/companies/{id}", name="get_company", methods={"GET"})
+     * @Route("/api/compagnies/{id}", name="get_company", methods={"GET"})
      */
     public function getOne(CompanyRepository $companyRepo, $id): JsonResponse
     {
@@ -60,8 +60,12 @@ class CompanyController extends AbstractController
             return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
         }
         $errors = $this->companyService->ressourceRightsGetCompany($this->getUser(),$company);
+        $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
         if($errors instanceof JsonResponse){
             return $errors;
+        }
+        if($errorsProspect instanceof JsonResponse){
+            return $errorsProspect;
         }
         $json = $this->serializer->serialize(['body' => $company, 'code' => Response::HTTP_OK], 'json', ['groups' => 'company:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);

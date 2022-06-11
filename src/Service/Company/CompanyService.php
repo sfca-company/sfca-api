@@ -38,6 +38,13 @@ class CompanyService
         }
     }
 
+    /**
+     * 
+     *
+     * @param User $user
+     * @param Company $company
+     * @return JsonResponse|null
+     */
     public function ressourceRightsGetCompany(User $user, Company $company): ?JsonResponse
     {
         try {
@@ -70,6 +77,7 @@ class CompanyService
                     "code" => Response::HTTP_BAD_REQUEST
                 ]);
             }
+            return null;
         } catch (\Exception $e) {
             return new JsonResponse([
                 'exception' => $e->getMessage(),

@@ -16,7 +16,7 @@ class ContactService
      *
      * @param User $user
      * @param Contact $contact
-     * @return void
+     * @return @return JsonResponse|null
      */
     public function ressourceRightsGetContact(User $user,Contact $contact) :?JsonResponse
     {
@@ -50,6 +50,7 @@ class ContactService
                     "code"=>Response::HTTP_BAD_REQUEST
                 ]);
             }
+            return null;
         } catch (\Exception $e) {
             return new JsonResponse([
                 'exception'=>$e->getMessage(),
@@ -62,21 +63,35 @@ class ContactService
         if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
             return true;
         }
+        $companiesUserConnect = $user->getCompanies();
+        $checkCompaniesUserConnectToContactRequest = false;
         if(!array_key_exists('company',$body)){
             return new JsonResponse([
-                'Exception'=>"company in body required",
+                'exception'=>"company in body required",
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }
-        if(empty($user->getCompany()) ){
+        if(empty($user->getCompanies()) ){
             return new JsonResponse([
-                'Exception'=>"contact the administrator, not company associed",
+                'exception'=>"contact the administrator, not company associed",
+                'error'=>['user'=>"user not have companies"],
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }
-        if ($user->getCompany()->getId() !== $body['company']) {
+
+        foreach($companiesUserConnect as $companyUserConnect){
+            if ($checkCompaniesUserConnectToContactRequest === true) {
+                break;
+            }
+
+            if ($companyUserConnect === $body['company']) {
+                $checkCompaniesUserConnectToContactRequest = true;
+            }
+        }
+        if ($checkCompaniesUserConnectToContactRequest === false) {
             return new JsonResponse([
-                'Exception'=>"contact the administrator, your rights are not sufficient",
+                'exception'=>"contact the administrator, your rights are not sufficient",
+                'error'=>['user'=>"checkCompaniesUserConnectToContactRequest false"],
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }

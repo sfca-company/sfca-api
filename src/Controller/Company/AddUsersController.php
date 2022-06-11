@@ -38,7 +38,7 @@ class AddUsersController extends AbstractController
     }
 
     /**
-     * @Route("/api/company/{id}/users",methods={"PUT"}, name="update_company_users")
+     * @Route("/api/compagnies/{id}/users",methods={"PUT"}, name="update_company_users")
      */
     public function update($id, Request $request, CompanyRepository $companyRepo, UserRepository $userRepo): JsonResponse
     {
