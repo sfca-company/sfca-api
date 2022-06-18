@@ -6,6 +6,7 @@ use ErrorException;
 use App\Entity\User;
 use App\Entity\Company\Company;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -13,12 +14,12 @@ class CompanyService
 {
 
 
-    private $em;
+    private $securityService;
 
     public function __construct(
-        EntityManagerInterface $em
+        SecurityService $securityService
     ) {
-        $this->em = $em;
+        $this->securityService = $securityService;
     }
 
     public function ressourceRightsAdmin(User $user): ?JsonResponse
@@ -43,9 +44,10 @@ class CompanyService
      *
      * @param User $user
      * @param Company $company
+     * @param ?string $method
      * @return JsonResponse|null
      */
-    public function ressourceRightsGetCompany(User $user, Company $company): ?JsonResponse
+    public function ressourceRightsGetCompany(User $user, Company $company,?string $method = null): ?JsonResponse
     {
         try {
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
@@ -77,7 +79,7 @@ class CompanyService
                     "code" => Response::HTTP_BAD_REQUEST
                 ]);
             }
-            return null;
+            return $this->securityService->ressourceAcces($user,$method);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'exception' => $e->getMessage(),

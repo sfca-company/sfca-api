@@ -102,7 +102,7 @@ class CompanyController extends AbstractController
                 $this->errors['errors'][] = ["id" => "company not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $errors = $this->companyService->ressourceRightsGetCompany($this->getUser(),$company);
+            $errors = $this->companyService->ressourceRightsGetCompany($this->getUser(),$company,$request->getMethod());
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
             if($errors instanceof JsonResponse){
                 return $errors;

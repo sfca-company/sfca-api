@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
@@ -17,6 +18,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     const ROLE_PROSPECT = "ROLE_PROSPECT";
     const ROLE_ADMIN = "ROLE_ADMIN";
+
+    const ACCEES_ALL = 1; // Permet d'avoir tous les droits
+    const ACCEES_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
+    const ACCEES_CREATE = 3; // Permet d'avoir le READ + CREATE
+    const ACCEES_READ = 4; // Permet d'avoir le read
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -47,6 +54,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Groups({"user:read"})
      */
     private $companies;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"user:read"})
+     */
+    private $accees = 4;
 
     public function __construct()
     {
@@ -162,6 +175,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCompany(Company $company): self
     {
         $this->companies->removeElement($company);
+
+        return $this;
+    }
+
+    public function getAccees(): ?int
+    {
+        return $this->accees;
+    }
+
+    public function setAccees(?int $accees): self
+    {
+        $this->accees = $accees;
 
         return $this;
     }

@@ -5,20 +5,29 @@ namespace App\Service\Contact;
 use ErrorException;
 use App\Entity\User;
 use App\Entity\Contact\Contact;
+use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ContactService
 {
+    private $securityService;
+
+    public function __construct(
+        SecurityService $securityService
+    ) {
+        $this->securityService = $securityService;
+    }
 
     /**
      * Permet de controler si un user à le droit de requeter un contact
      *
      * @param User $user
      * @param Contact $contact
-     * @return @return JsonResponse|null
+     * @param ?string $method
+     * @return JsonResponse|null
      */
-    public function ressourceRightsGetContact(User $user,Contact $contact) :?JsonResponse
+    public function ressourceRightsGetContact(User $user,Contact $contact,?string $method = null) :?JsonResponse
     {
         try {
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
@@ -50,7 +59,7 @@ class ContactService
                     "code"=>Response::HTTP_BAD_REQUEST
                 ]);
             }
-            return null;
+            return $this->securityService->ressourceAcces($user,$method);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'exception'=>$e->getMessage(),

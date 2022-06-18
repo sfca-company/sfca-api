@@ -53,7 +53,7 @@ class DocumentController extends AbstractController
             if (empty($contact)) {
                 $this->errors['errors'][] = ["id" => "contact not found"];
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $contact);
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $contact,$request->getMethod());
             if ($errors instanceof JsonResponse) {
                 return $errors;
             }
@@ -97,7 +97,7 @@ class DocumentController extends AbstractController
                     false
                 );
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $document->getContact());
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $document->getContact(),$request->getMethod());
             if ($errors instanceof JsonResponse) {
                 return $errors;
             }
@@ -116,7 +116,7 @@ class DocumentController extends AbstractController
     /**
      * @Route("/api/document/{id}",methods={"DELETE"}, name="delete_document")
      */
-    public function delete($id, DocumentRepository $documentRepository): JsonResponse
+    public function delete($id, DocumentRepository $documentRepository,Request $request): JsonResponse
     {
         try {
             $document = $documentRepository->findOneBy(["id" => $id]);
@@ -124,7 +124,7 @@ class DocumentController extends AbstractController
                 $this->errors['errors'][] = ["document" => "document not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $document->getContact());
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $document->getContact(),$request->getMethod());
             if ($errors instanceof JsonResponse) {
                 return $errors;
             }

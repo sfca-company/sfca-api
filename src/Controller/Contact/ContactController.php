@@ -149,7 +149,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/api/contact/{id}",methods={"DELETE"}, name="delete_contact")
      */
-    public function delete($id, ContactRepository $contactRepo): JsonResponse
+    public function delete($id, ContactRepository $contactRepo,Request $request): JsonResponse
     {
         try {
             $contact = $contactRepo->findOneBy(["id" => $id]);
@@ -157,7 +157,7 @@ class ContactController extends AbstractController
                 $this->errors['errors'][] = ["contact" => "contact not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact,$request->getMethod());
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
             if($errorsProspect instanceof JsonResponse){
                 return $errorsProspect;
