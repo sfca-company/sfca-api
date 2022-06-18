@@ -130,6 +130,7 @@ class ContactController extends AbstractController
                     $contact->setCompany($company);
                 }
             }
+            return new JsonResponse($request->getMethod());
             $errors = $this->contactService->validator($this->getUser(),$body,$request->getMethod());
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
             if($errorsProspect instanceof JsonResponse){
