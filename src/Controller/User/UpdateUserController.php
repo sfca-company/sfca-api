@@ -57,6 +57,8 @@ class UpdateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
+        $accees = $body['accees'];
+        
         if (!empty($userRepo->findByEmail($email))) {
             if ($user->getEmail() !== $email) {
                 return $this->json([
@@ -68,6 +70,8 @@ class UpdateUserController extends AbstractController
 
         $user->setEmail($email);
         $user->setRoles($roles);
+        $user->setAccees($accees);
+        
         if (is_array($companies)) {
             foreach ($user->getCompanies() as  $company) {
                 $user->removeCompany($company);
@@ -139,6 +143,21 @@ class UpdateUserController extends AbstractController
         }
         if (empty($user)) {
             $error = ["user" => "not found"];
+            $this->errors['errors'][] = $error;
+        }
+        if (!array_key_exists("accees", $body)) {
+            $error = ["accees" => "empty"];
+            $this->errors['errors'][] = $error;
+        }
+        if (array_key_exists("accees", $body)) {
+            $accees = $body['accees'];
+            if(!is_int($accees)){
+                $error = ["accees" => "the value must be a number "];
+            }
+            if(intval($accees) >= 5){
+                $error = ["accees" => "impossible access $accees "];
+            }
+            $error = ["accees" => "empty"];
             $this->errors['errors'][] = $error;
         }
     }
