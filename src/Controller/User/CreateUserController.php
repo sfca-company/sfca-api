@@ -58,6 +58,7 @@ class CreateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
+        $accees = $body['accees'];
         if (!empty($userRepo->findByEmail($email))) {
             return $this->json([
                 "body" => ["errors" => ["email existant"]],
@@ -73,6 +74,7 @@ class CreateUserController extends AbstractController
         $user->setPassword($hashedPassword);
         $user->setEmail($email);
         $user->setRoles($this->userService->validatorRoles($roles));
+        $user->setAccees($accees);
         if (is_array($companies)) {
             foreach ($companies as $companyId) {
                 $company = $companyRepo->findOneBy(["id"=>$companyId]);
@@ -104,6 +106,21 @@ class CreateUserController extends AbstractController
         }
         if (!array_key_exists("companies", $body)) {
             $error = ["companies" => "empty"];
+            $this->errors['errors'][] = $error;
+        }
+        if (!array_key_exists("accees", $body)) {
+            $error = ["accees" => "empty"];
+            $this->errors['errors'][] = $error;
+        }
+        if (array_key_exists("accees", $body)) {
+            $accees = $body['accees'];
+            if(!is_int($accees)){
+                $error = ["accees" => "the value must be a number "];
+            }
+            if(intval($accees) >= 5){
+                $error = ["accees" => "impossible access $accees "];
+            }
+            $error = ["accees" => "empty"];
             $this->errors['errors'][] = $error;
         }
     }
