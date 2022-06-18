@@ -116,12 +116,13 @@ class CreateUserController extends AbstractController
             $accees = $body['accees'];
             if(!is_int($accees)){
                 $error = ["accees" => "the value must be a number "];
+                $this->errors['errors'][] = $error;
             }
             if(intval($accees) >= 5){
                 $error = ["accees" => "impossible access $accees "];
+                $this->errors['errors'][] = $error;
             }
-            $error = ["accees" => "empty"];
-            $this->errors['errors'][] = $error;
+
         }
     }
 }
