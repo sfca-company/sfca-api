@@ -68,7 +68,7 @@ class ContactService
         }
     }
 
-    public function validator(User $user,array $body){
+    public function validator(User $user,array $body,?string $method = null){
         if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
             return true;
         }
@@ -111,5 +111,6 @@ class ContactService
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }
+        return $this->securityService->ressourceAcces($user,$method);
     }
 }

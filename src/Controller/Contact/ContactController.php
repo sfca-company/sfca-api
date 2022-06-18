@@ -90,7 +90,7 @@ class ContactController extends AbstractController
                 $contact->setCompany($company);
             }
         }
-        $errors = $this->contactService->validator($this->getUser(),$body);
+        $errors = $this->contactService->validator($this->getUser(),$body,$request->getMethod());
         $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
         if($errorsProspect instanceof JsonResponse){
             return $errorsProspect;
@@ -130,7 +130,7 @@ class ContactController extends AbstractController
                     $contact->setCompany($company);
                 }
             }
-            $errors = $this->contactService->validator($this->getUser(),$body);
+            $errors = $this->contactService->validator($this->getUser(),$body,$request->getMethod());
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
             if($errorsProspect instanceof JsonResponse){
                 return $errorsProspect;
