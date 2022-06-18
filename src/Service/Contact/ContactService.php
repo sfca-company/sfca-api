@@ -98,9 +98,16 @@ class ContactService
             }
         }
         if ($checkCompaniesUserConnectToContactRequest === false) {
+            $arrayIdCompany = [];
+            foreach($user->getCompanies() as $company){
+                $arrayIdCompany[]  = $company->getId();
+            }
             return new JsonResponse([
                 'exception'=>"contact the administrator, your rights are not sufficient",
-                'error'=>['user'=>"checkCompaniesUserConnectToContactRequest false"],
+                'error'=>[
+                    'user'=>"checkCompaniesUserConnectToContactRequest false",
+                    "userCompanies"=>$arrayIdCompany
+                ],
                 "code"=>Response::HTTP_BAD_REQUEST
             ]);
         }
