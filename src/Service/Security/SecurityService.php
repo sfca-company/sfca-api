@@ -108,12 +108,6 @@ class SecurityService
                 default:
                     return null;
             }
-            return new JsonResponse([
-                'exception' => "contact the administrator, your rights are not sufficient",
-                'errors' => ['user' => "forbiddenProspect"],
-                "code" => Response::HTTP_BAD_REQUEST
-            ]);
-
 
             return null;
         } catch (\Exception $e) {
