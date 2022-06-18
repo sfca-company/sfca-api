@@ -93,7 +93,7 @@ class ContactService
                 break;
             }
 
-            if ($companyUserConnect === $body['company']) {
+            if ($companyUserConnect->getId() === $body['company']) {
                 $checkCompaniesUserConnectToContactRequest = true;
             }
         }
