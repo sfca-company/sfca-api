@@ -79,7 +79,7 @@ class SecurityService
             switch ($method) {
                 case "POST":
 
-                    if ($accees < User::ACCEES_CREATE) {
+                    if ($accees > User::ACCEES_CREATE) {
                         return new JsonResponse([
                             'exception' => "contact the administrator, your rights are not sufficient",
                             'errors' => ['user' => "accees insufisant $accees", "method" => $method],
@@ -88,7 +88,7 @@ class SecurityService
                     }
                     break;
                 case "PUT":
-                    if ($accees <  User::ACCEES_UPDATE) {
+                    if ($accees >  User::ACCEES_UPDATE) {
                         return new JsonResponse([
                             'exception' => "contact the administrator, your rights are not sufficient",
                             'errors' => ['user' => "accees insufisant $accees", "method" => $method],
@@ -97,7 +97,7 @@ class SecurityService
                     }
                     break;
                 case "DELETE":
-                    if ($accees <  User::ACCEES_ALL) {
+                    if ($accees >  User::ACCEES_ALL) {
                         return new JsonResponse([
                             'exception' => "contact the administrator, your rights are not sufficient",
                             'errors' => ['user' => "accees insufisant $accees", "method" => $method],

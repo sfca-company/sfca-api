@@ -43,7 +43,7 @@ class ContactController extends AbstractController
     public function getAll(ContactRepository $contactRepo): JsonResponse
     {
         $errors = $this->securityService->ressourceRightsAdmin($this->getUser());
-        if($errors instanceof JsonResponse){
+        if ($errors instanceof JsonResponse) {
             return $errors;
         }
         $json = $this->serializer->serialize(['body' => $contactRepo->findAll(), 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
@@ -60,12 +60,12 @@ class ContactController extends AbstractController
             array_push($this->errors['errors'], ['id' => 'contact not found']);
             return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
         }
-        $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact);
+        $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $contact);
         $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-        if($errorsProspect instanceof JsonResponse){
+        if ($errorsProspect instanceof JsonResponse) {
             return $errorsProspect;
         }
-        if($errors instanceof JsonResponse){
+        if ($errors instanceof JsonResponse) {
             return $errors;
         }
         $json = $this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
@@ -90,12 +90,12 @@ class ContactController extends AbstractController
                 $contact->setCompany($company);
             }
         }
-        $errors = $this->contactService->validator($this->getUser(),$body,$request->getMethod());
+        $errors = $this->contactService->validator($this->getUser(), $body, $request->getMethod());
         $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-        if($errorsProspect instanceof JsonResponse){
+        if ($errorsProspect instanceof JsonResponse) {
             return $errorsProspect;
         }
-        if($errors instanceof JsonResponse){
+        if ($errors instanceof JsonResponse) {
             return $errors;
         }
         $this->em->persist($contact);
@@ -130,13 +130,12 @@ class ContactController extends AbstractController
                     $contact->setCompany($company);
                 }
             }
-            return new JsonResponse($request->getMethod());
-            $errors = $this->contactService->validator($this->getUser(),$body,$request->getMethod());
+            $errors = $this->contactService->validator($this->getUser(), $body, $request->getMethod());
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-            if($errorsProspect instanceof JsonResponse){
+            if ($errorsProspect instanceof JsonResponse) {
                 return $errorsProspect;
             }
-            if($errors instanceof JsonResponse){
+            if ($errors instanceof JsonResponse) {
                 return $errors;
             }
             $this->em->persist($contact);
@@ -150,7 +149,7 @@ class ContactController extends AbstractController
     /**
      * @Route("/api/contact/{id}",methods={"DELETE"}, name="delete_contact")
      */
-    public function delete($id, ContactRepository $contactRepo,Request $request): JsonResponse
+    public function delete($id, ContactRepository $contactRepo, Request $request): JsonResponse
     {
         try {
             $contact = $contactRepo->findOneBy(["id" => $id]);
@@ -158,12 +157,12 @@ class ContactController extends AbstractController
                 $this->errors['errors'][] = ["contact" => "contact not found"];
                 return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
             }
-            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(),$contact,$request->getMethod());
+            $errors = $this->contactService->ressourceRightsGetContact($this->getUser(), $contact, $request->getMethod());
             $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-            if($errorsProspect instanceof JsonResponse){
+            if ($errorsProspect instanceof JsonResponse) {
                 return $errorsProspect;
             }
-            if($errors instanceof JsonResponse){
+            if ($errors instanceof JsonResponse) {
                 return $errors;
             }
             $this->em->remove($contact);
