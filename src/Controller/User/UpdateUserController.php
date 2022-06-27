@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\Company\CompanyRepository;
 use App\Service\User\UserService;
 use App\Repository\UserRepository;
+use App\Service\Adress\AdressService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,14 +25,17 @@ class UpdateUserController extends AbstractController
     private $userService;
     private $errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST, "exception" => []];
     private $em;
+    private $adressService;
     public function __construct(
         SecurityService $securityService,
         UserService $userService,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        AdressService $adressService
     ) {
         $this->securityService = $securityService;
         $this->userService = $userService;
         $this->em = $em;
+        $this->adressService = $adressService;
     }
     /**
      * @Route("/api/users/{idUser}", name="update_users", methods={"PUT"})
@@ -83,6 +87,7 @@ class UpdateUserController extends AbstractController
                 }
             }
         }
+        $user = $this->userService->addNonMandatoryAttribute($body,$user);
         $this->em->persist($user);
         $this->em->flush();
         $this->em->refresh($user);

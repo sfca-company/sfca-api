@@ -61,6 +61,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $accees = 4;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Adress::class, cascade={"persist", "remove"})
+     * @Groups({"user:read"})
+     */
+    private $adress;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read"})
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read"})
+     */
+    private $lastName;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"user:read"})
+     */
+    private $dateOfBith;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"user:read"})
+     */
+    private $profession;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"user:read"})
+     */
+    private $notes;
+
     public function __construct()
     {
         $this->companies = new ArrayCollection();
@@ -187,6 +223,78 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAccees(?int $accees): self
     {
         $this->accees = $accees;
+
+        return $this;
+    }
+
+    public function getAdress(): ?Adress
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(?Adress $adress): self
+    {
+        $this->adress = $adress;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getDateOfBith(): ?\DateTimeInterface
+    {
+        return $this->dateOfBith;
+    }
+
+    public function setDateOfBith(?\DateTimeInterface $dateOfBith): self
+    {
+        $this->dateOfBith = $dateOfBith;
+
+        return $this;
+    }
+
+    public function getProfession(): ?string
+    {
+        return $this->profession;
+    }
+
+    public function setProfession(?string $profession): self
+    {
+        $this->profession = $profession;
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
 
         return $this;
     }

@@ -4,18 +4,24 @@ namespace App\Service\User;
 
 use ErrorException;
 use App\Entity\User;
+use App\Service\Adress\AdressService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserService
 {
-
+    private $adressService;
     const ROLE_PROSPECT = "ROLE_PROSPECT";
     const ROLE_ADMIN = "ROLE_ADMIN";
     const ROLE_CLIENT = "ROLE_CLIENT";
 
     const ARRAY_ROLES = [UserService::ROLE_PROSPECT, UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
 
+    public function __construct(
+        AdressService $adressService
+    ) {
+        $this->adressService = $adressService;
+    }
     public function ressourceRightsGetUser(User $user, User $userRequest): ?JsonResponse
     {
         try {
@@ -89,5 +95,30 @@ class UserService
             }
         }
         return $acceptedRoles;
+    }
+
+    public function addNonMandatoryAttribute(array $body,User $user) :User
+    {
+        if(array_key_exists("firstName",$body)){
+            $user->setFirstName($body["firstName"]);
+        }
+        if(array_key_exists("lastName",$body)){
+            $user->setLastName($body["lastName"]);
+        }
+        if(array_key_exists("dateOfBith",$body)){
+            $user->setDateOfBith(new \Datetime($body["dateOfBith"]));
+        }
+        if(array_key_exists("profession",$body)){
+            $user->setProfession($body["profession"]);
+        }
+        if(array_key_exists("notes",$body)){
+            $user->setNotes($body["notes"]);
+        }
+        $adress = $this->adressService->create($body);
+        if(!empty($adress)){
+            $user->setAdress($adress);
+        }
+
+        return $user;
     }
 }

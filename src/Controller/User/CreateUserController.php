@@ -3,11 +3,13 @@
 namespace App\Controller\User;
 
 use App\Entity\User;
-use App\Repository\Company\CompanyRepository;
+use App\Entity\Adress;
 use App\Service\User\UserService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
+use App\Repository\Company\CompanyRepository;
+use App\Service\Adress\AdressService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,11 +29,13 @@ class CreateUserController extends AbstractController
     public function __construct(
         SecurityService $securityService,
         UserService $userService,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        AdressService $adressService
     ) {
         $this->securityService = $securityService;
         $this->userService = $userService;
         $this->em = $em;
+        $this->adressService = $adressService;
     }
     /**
      * @Route("/api/users", name="create_users", methods={"POST"})
@@ -83,6 +87,8 @@ class CreateUserController extends AbstractController
                 }
             }
         }
+        $user = $this->userService->addNonMandatoryAttribute($body,$user);
+        
         $this->em->persist($user);
         $this->em->flush();
         $json = $serializer->serialize(["body" => $user, "code" => Response::HTTP_OK], 'json', ["groups" => "user:read"]);
