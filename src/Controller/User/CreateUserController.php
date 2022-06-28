@@ -62,7 +62,7 @@ class CreateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
-        $accees = $body['accees'];
+        $acceess = $body['acceess'];
         if (!empty($userRepo->findByEmail($email))) {
             return $this->json([
                 "body" => ["errors" => ["email existant"]],
@@ -78,7 +78,7 @@ class CreateUserController extends AbstractController
         $user->setPassword($hashedPassword);
         $user->setEmail($email);
         $user->setRoles($this->userService->validatorRoles($roles));
-        $user->setAccees($accees);
+        $user->setAcceess($acceess);
         if (is_array($companies)) {
             foreach ($companies as $companyId) {
                 $company = $companyRepo->findOneBy(["id"=>$companyId]);
@@ -114,18 +114,18 @@ class CreateUserController extends AbstractController
             $error = ["companies" => "empty"];
             $this->errors['errors'][] = $error;
         }
-        if (!array_key_exists("accees", $body)) {
-            $error = ["accees" => "empty"];
+        if (!array_key_exists("acceess", $body)) {
+            $error = ["acceess" => "empty"];
             $this->errors['errors'][] = $error;
         }
-        if (array_key_exists("accees", $body)) {
-            $accees = $body['accees'];
-            if(!is_int($accees)){
-                $error = ["accees" => "the value must be a number "];
+        if (array_key_exists("acceess", $body)) {
+            $acceess = $body['acceess'];
+            if(!is_int($acceess)){
+                $error = ["acceess" => "the value must be a number "];
                 $this->errors['errors'][] = $error;
             }
-            if(intval($accees) >= 5){
-                $error = ["accees" => "impossible access $accees "];
+            if(intval($acceess) >= 5){
+                $error = ["acceess" => "impossible access $acceess "];
                 $this->errors['errors'][] = $error;
             }
 

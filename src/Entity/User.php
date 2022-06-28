@@ -19,10 +19,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     const ROLE_PROSPECT = "ROLE_PROSPECT";
     const ROLE_ADMIN = "ROLE_ADMIN";
 
-    const ACCEES_ALL = 1; // Permet d'avoir tous les droits
-    const ACCEES_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
-    const ACCEES_CREATE = 3; // Permet d'avoir le READ + CREATE
-    const ACCEES_READ = 4; // Permet d'avoir le read
+    const ACCEESS_ALL = 1; // Permet d'avoir tous les droits
+    const ACCEESS_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
+    const ACCEESS_CREATE = 3; // Permet d'avoir le READ + CREATE
+    const ACCEESS_READ = 4; // Permet d'avoir le read
 
     /**
      * @ORM\Id
@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"user:read"})
      */
-    private $accees = 4;
+    private $acceess = 4;
 
     /**
      * @ORM\OneToOne(targetEntity=Adress::class, cascade={"persist", "remove"})
@@ -228,14 +228,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAccees(): ?int
+    public function getAcceess(): ?int
     {
-        return $this->accees;
+        return $this->acceess;
     }
 
-    public function setAccees(?int $accees): self
+    public function setAcceess(?int $acceess): self
     {
-        $this->accees = $accees;
+        $this->acceess = $acceess;
 
         return $this;
     }

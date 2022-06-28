@@ -75,32 +75,32 @@ class SecurityService
                 return null;
             }
             $method = strtoupper($method);
-            $accees = $user->getAccees();
+            $acceess = $user->getAcceess();
             switch ($method) {
                 case "POST":
 
-                    if ($accees > User::ACCEES_CREATE) {
+                    if ($acceess > User::ACCEESS_CREATE) {
                         return new JsonResponse([
                             'exception' => "contact the administrator, your rights are not sufficient",
-                            'errors' => ['user' => "accees insufisant $accees", "method" => $method],
+                            'errors' => ['user' => "accees insufisant $acceess", "method" => $method],
                             "code" => Response::HTTP_BAD_REQUEST
                         ]);
                     }
                     break;
                 case "PUT":
-                    if ($accees >  User::ACCEES_UPDATE) {
+                    if ($acceess >  User::ACCEESS_UPDATE) {
                         return new JsonResponse([
                             'exception' => "contact the administrator, your rights are not sufficient",
-                            'errors' => ['user' => "accees insufisant $accees", "method" => $method],
+                            'errors' => ['user' => "accees insufisant $acceess", "method" => $method],
                             "code" => Response::HTTP_BAD_REQUEST
                         ]);
                     }
                     break;
                 case "DELETE":
-                    if ($accees >  User::ACCEES_ALL) {
+                    if ($acceess >  User::ACCEESS_ALL) {
                         return new JsonResponse([
                             'exception' => "contact the administrator, your rights are not sufficient",
-                            'errors' => ['user' => "accees insufisant $accees", "method" => $method],
+                            'errors' => ['user' => "accees insufisant $acceess", "method" => $method],
                             "code" => Response::HTTP_BAD_REQUEST
                         ]);
                     }

@@ -61,7 +61,7 @@ class UpdateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
-        $accees = $body['accees'];
+        $acceess = $body['acceess'];
         
         if (!empty($userRepo->findByEmail($email))) {
             if ($user->getEmail() !== $email) {
@@ -74,7 +74,7 @@ class UpdateUserController extends AbstractController
 
         $user->setEmail($email);
         $user->setRoles($roles);
-        $user->setAccees($accees);
+        $user->setAcceess($acceess);
 
         if (is_array($companies)) {
             foreach ($user->getCompanies() as  $company) {
@@ -150,18 +150,18 @@ class UpdateUserController extends AbstractController
             $error = ["user" => "not found"];
             $this->errors['errors'][] = $error;
         }
-        if (!array_key_exists("accees", $body)) {
-            $error = ["accees" => "empty"];
+        if (!array_key_exists("acceess", $body)) {
+            $error = ["acceess" => "empty"];
             $this->errors['errors'][] = $error;
         }
-        if (array_key_exists("accees", $body)) {
-            $accees = $body['accees'];
-            if(!is_int($accees)){
-                $error = ["accees" => "the value must be a number "];
+        if (array_key_exists("acceess", $body)) {
+            $acceess = $body['acceess'];
+            if(!is_int($acceess)){
+                $error = ["acceess" => "the value must be a number "];
                 $this->errors['errors'][] = $error;
             }
-            if(intval($accees) >= 5){
-                $error = ["accees" => "impossible access $accees "];
+            if(intval($acceess) >= 5){
+                $error = ["acceess" => "impossible access $acceess "];
                 $this->errors['errors'][] = $error;
             }
 

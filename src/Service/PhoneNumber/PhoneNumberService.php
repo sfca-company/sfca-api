@@ -20,6 +20,7 @@ class PhoneNumberService
 
     private $serializer;
     private $phoneNumberRepo;
+    public $types = ["Mobile","House","Partner"];
     public function __construct(
         SerializerInterface $serializer,
         PhoneNumberRepository $phoneNumberRepo
@@ -159,5 +160,15 @@ class PhoneNumberService
             }
         }
         return $phoneNumbers;
+    }
+
+    /**
+     * Permet de retourner les différents types de téléphone
+     *
+     * @return array
+     */
+    public function getTypes() :array
+    {
+        return $this->types;
     }
 }
