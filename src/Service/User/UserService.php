@@ -5,12 +5,14 @@ namespace App\Service\User;
 use ErrorException;
 use App\Entity\User;
 use App\Service\Adress\AdressService;
+use App\Service\PhoneNumber\PhoneNumberService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserService
 {
     private $adressService;
+    private $phoneNumberService;
     const ROLE_PROSPECT = "ROLE_PROSPECT";
     const ROLE_ADMIN = "ROLE_ADMIN";
     const ROLE_CLIENT = "ROLE_CLIENT";
@@ -18,9 +20,11 @@ class UserService
     const ARRAY_ROLES = [UserService::ROLE_PROSPECT, UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
 
     public function __construct(
-        AdressService $adressService
+        AdressService $adressService,
+        PhoneNumberService $phoneNumberService
     ) {
         $this->adressService = $adressService;
+        $this->phoneNumberService = $phoneNumberService;
     }
     public function ressourceRightsGetUser(User $user, User $userRequest): ?JsonResponse
     {
@@ -97,28 +101,41 @@ class UserService
         return $acceptedRoles;
     }
 
-    public function addNonMandatoryAttribute(array $body,User $user) :User
+    public function addNonMandatoryAttribute(array $body, User $user): User
     {
-        if(array_key_exists("firstName",$body)){
+        if (array_key_exists("firstName", $body)) {
             $user->setFirstName($body["firstName"]);
         }
-        if(array_key_exists("lastName",$body)){
+        if (array_key_exists("lastName", $body)) {
             $user->setLastName($body["lastName"]);
         }
-        if(array_key_exists("dateOfBith",$body)){
+        if (array_key_exists("dateOfBith", $body)) {
             $user->setDateOfBith(new \Datetime($body["dateOfBith"]));
         }
-        if(array_key_exists("profession",$body)){
+        if (array_key_exists("profession", $body)) {
             $user->setProfession($body["profession"]);
         }
-        if(array_key_exists("notes",$body)){
+        if (array_key_exists("notes", $body)) {
             $user->setNotes($body["notes"]);
         }
         $adress = $this->adressService->create($body);
-        if(!empty($adress)){
+        if (!empty($adress)) {
             $user->setAdress($adress);
         }
-
+        $phoneNumber = $this->phoneNumberService->create($body);
+        if (!empty($phoneNumber)) {
+            $user->setPhoneNumberFavorite($phoneNumber);
+        }
+        $phoneNumbers = $user->getPhoneNumbers();
+        foreach($phoneNumbers as $number){
+            $user->removePhoneNumber($number);
+        }
+        $phoneNumbers = $this->phoneNumberService->updateMultiple($body,$user);
+        if (!empty($phoneNumbers)) {
+            foreach ($phoneNumbers as $phoneNumber) {
+                $user->addPhoneNumber($phoneNumber);
+            }
+        }
         return $user;
     }
 }

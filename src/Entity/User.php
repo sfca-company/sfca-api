@@ -97,9 +97,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $notes;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PhoneNumber::class, mappedBy="user",cascade={"persist","remove"})
+     *  @Groups({"user:read"})
+     */
+    private $phoneNumbers;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=PhoneNumber::class,cascade={"persist","remove"})
+     *  @Groups({"user:read"})
+     */
+    private $phoneNumberFavorite;
+
     public function __construct()
     {
         $this->companies = new ArrayCollection();
+        $this->phoneNumbers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -295,6 +308,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PhoneNumber>
+     */
+    public function getPhoneNumbers(): Collection
+    {
+        return $this->phoneNumbers;
+    }
+
+    public function addPhoneNumber(PhoneNumber $phoneNumber): self
+    {
+        if (!$this->phoneNumbers->contains($phoneNumber)) {
+            $this->phoneNumbers[] = $phoneNumber;
+            $phoneNumber->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoneNumber(PhoneNumber $phoneNumber): self
+    {
+        if ($this->phoneNumbers->removeElement($phoneNumber)) {
+            // set the owning side to null (unless already changed)
+            if ($phoneNumber->getUser() === $this) {
+                $phoneNumber->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPhoneNumberFavorite(): ?PhoneNumber
+    {
+        return $this->phoneNumberFavorite;
+    }
+
+    public function setPhoneNumberFavorite(?PhoneNumber $phoneNumberFavorite): self
+    {
+        $this->phoneNumberFavorite = $phoneNumberFavorite;
 
         return $this;
     }
