@@ -17,8 +17,13 @@ class UserService
     const ROLE_ADMIN = "ROLE_ADMIN";
     const ROLE_CLIENT = "ROLE_CLIENT";
 
-    const ARRAY_ROLES = [UserService::ROLE_PROSPECT, UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
+    const ACCEESS_ALL = 1; // Permet d'avoir tous les droits
+    const ACCEESS_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
+    const ACCEESS_CREATE = 3; // Permet d'avoir le READ + CREATE
+    const ACCEESS_READ = 4; // Permet d'avoir le read
 
+    const ARRAY_ROLES = [UserService::ROLE_PROSPECT, UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
+    const ARRAY_ACCEESS = [UserService::ACCEESS_ALL, UserService::ACCEESS_UPDATE, UserService::ACCEESS_CREATE, UserService::ACCEESS_READ];
     public function __construct(
         AdressService $adressService,
         PhoneNumberService $phoneNumberService
@@ -127,15 +132,25 @@ class UserService
             $user->setPhoneNumberFavorite($phoneNumber);
         }
         $phoneNumbers = $user->getPhoneNumbers();
-        foreach($phoneNumbers as $number){
+        foreach ($phoneNumbers as $number) {
             $user->removePhoneNumber($number);
         }
-        $phoneNumbers = $this->phoneNumberService->updateMultiple($body,$user);
+        $phoneNumbers = $this->phoneNumberService->updateMultiple($body, $user);
         if (!empty($phoneNumbers)) {
             foreach ($phoneNumbers as $phoneNumber) {
                 $user->addPhoneNumber($phoneNumber);
             }
         }
         return $user;
+    }
+
+    public function getRoles(): array
+    {
+        return UserService::ARRAY_ROLES;
+    }
+
+    public function getAcceess(): array
+    {
+        return UserService::ARRAY_ACCEESS;
     }
 }

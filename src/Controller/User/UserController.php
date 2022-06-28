@@ -44,6 +44,26 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/api/users/roles", name="get_roles", methods={"GET"})
+     */
+    public function getRoles(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
+    {
+
+        $json = $serializer->serialize(['body' => $this->userService->getRoles(), 'code' => Response::HTTP_OK], 'json');
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
+    }
+
+    /**
+     * @Route("/api/users/acceess", name="get_acceess", methods={"GET"})
+     */
+    public function getAcceess(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
+    {
+
+        $json = $serializer->serialize(['body' => $this->userService->getAcceess(), 'code' => Response::HTTP_OK], 'json');
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
+    }
+
+    /**
      * @Route("/api/me", name="get_users_connect", methods={"GET"})
      */
     public function getInfoUserConnect(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
@@ -66,7 +86,7 @@ class UserController extends AbstractController
             return $errors;
         }
         $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-        if($errorsProspect instanceof JsonResponse){
+        if ($errorsProspect instanceof JsonResponse) {
             return $errorsProspect;
         }
         $json = $serializer->serialize(['body' => $user, 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
@@ -92,7 +112,7 @@ class UserController extends AbstractController
             return $errors;
         }
         $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
-        if($errorsProspect instanceof JsonResponse){
+        if ($errorsProspect instanceof JsonResponse) {
             return $errorsProspect;
         }
         $json = $serializer->serialize(['body' => $users, 'code' => Response::HTTP_OK], 'json', ['groups' => 'user:read']);
