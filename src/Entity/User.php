@@ -19,10 +19,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     const ROLE_PROSPECT = "ROLE_PROSPECT";
     const ROLE_ADMIN = "ROLE_ADMIN";
 
-    const ACCEESS_ALL = 1; // Permet d'avoir tous les droits
-    const ACCEESS_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
-    const ACCEESS_CREATE = 3; // Permet d'avoir le READ + CREATE
-    const ACCEESS_READ = 4; // Permet d'avoir le read
+    const ACCESS_ALL = 1; // access Permet d'avoir tous les droits
+    const ACCESS_UPDATE = 2; // access Permet d'avoir le READ + CREATE + UPDATE
+    const ACCESS_CREATE = 3; // access Permet d'avoir le READ + CREATE
+    const ACCESS_READ = 4; // access Permet d'avoir le read
 
     /**
      * @ORM\Id
@@ -59,13 +59,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"user:read"})
      */
-    private $acceess = 4;
+    private $access = 4;
 
     /**
-     * @ORM\OneToOne(targetEntity=Adress::class, cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
      * @Groups({"user:read"})
      */
-    private $adress;
+    private $address;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -83,7 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"user:read"})
      */
-    private $dateOfBith;
+    private $dateOfBirth;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -228,26 +228,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAcceess(): ?int
+    public function getAccess(): ?int
     {
-        return $this->acceess;
+        return $this->access;
     }
 
-    public function setAcceess(?int $acceess): self
+    public function setAccess(?int $access): self
     {
-        $this->acceess = $acceess;
+        $this->access = $access;
 
         return $this;
     }
 
-    public function getAdress(): ?Adress
+    public function getAddress(): ?Address
     {
-        return $this->adress;
+        return $this->address;
     }
 
-    public function setAdress(?Adress $adress): self
+    public function setAddress(?Address $address): self
     {
-        $this->adress = $adress;
+        $this->address = $address;
 
         return $this;
     }
@@ -276,14 +276,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDateOfBith(): ?\DateTimeInterface
+    public function getDateOfBirth(): ?\DateTimeInterface
     {
-        return $this->dateOfBith;
+        return $this->dateOfBirth;
     }
 
-    public function setDateOfBith(?\DateTimeInterface $dateOfBith): self
+    public function setDateOfBirth(?\DateTimeInterface $dateOfBirth): self
     {
-        $this->dateOfBith = $dateOfBith;
+        $this->dateOfBirth = $dateOfBirth;
 
         return $this;
     }

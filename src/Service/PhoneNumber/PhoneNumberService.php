@@ -4,10 +4,10 @@ namespace App\Service\PhoneNumber;
 
 use ErrorException;
 use App\Entity\User;
-use App\Entity\Adress;
+use App\Entity\Address;
 use App\Entity\Company\Company;
 use App\Entity\PhoneNumber;
-use App\Repository\AdressRepository;
+use App\Repository\AddressRepository;
 use App\Repository\PhoneNumberRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
@@ -88,12 +88,12 @@ class PhoneNumberService
     }
 
     /**
-     * Permet de créer une adress ou de l'update
+     * Permet de créer une address ou de l'update
      *
      * @param array $body
-     * @return Adress|null
+     * @return Address|null
      */
-    public function update(array $body): ?Adress
+    public function update(array $body): ?Address
     {
         $phoneNumber = null;
         if (array_key_exists("phoneNumber", $body)) {
@@ -105,7 +105,7 @@ class PhoneNumberService
                 $phoneNumberBody = $body['phoneNumber'];
                 $phoneNumber = $this->serializer->deserialize(
                     json_encode($phoneNumberBody),
-                    Adress::class,
+                    Address::class,
                     'json',
                     [
                         'groups' => 'phoneNumber:write',

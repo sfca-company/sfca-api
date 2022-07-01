@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Repository\Company\CompanyRepository;
 use App\Service\User\UserService;
 use App\Repository\UserRepository;
-use App\Service\Adress\AdressService;
+use App\Service\Address\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,17 +25,17 @@ class UpdateUserController extends AbstractController
     private $userService;
     private $errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST, "exception" => []];
     private $em;
-    private $adressService;
+    private $addressService;
     public function __construct(
         SecurityService $securityService,
         UserService $userService,
         EntityManagerInterface $em,
-        AdressService $adressService
+        AddressService $addressService
     ) {
         $this->securityService = $securityService;
         $this->userService = $userService;
         $this->em = $em;
-        $this->adressService = $adressService;
+        $this->addressService = $addressService;
     }
     /**
      * @Route("/api/users/{idUser}", name="update_users", methods={"PUT"})
@@ -61,7 +61,7 @@ class UpdateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
-        $acceess = $body['acceess'];
+        $access = $body['access'];
         
         if (!empty($userRepo->findByEmail($email))) {
             if ($user->getEmail() !== $email) {
@@ -74,7 +74,7 @@ class UpdateUserController extends AbstractController
 
         $user->setEmail($email);
         $user->setRoles($roles);
-        $user->setAcceess($acceess);
+        $user->setAccess($access);
 
         if (is_array($companies)) {
             foreach ($user->getCompanies() as  $company) {
@@ -150,18 +150,18 @@ class UpdateUserController extends AbstractController
             $error = ["user" => "not found"];
             $this->errors['errors'][] = $error;
         }
-        if (!array_key_exists("acceess", $body)) {
-            $error = ["acceess" => "empty"];
+        if (!array_key_exists("access", $body)) {
+            $error = ["access" => "empty"];
             $this->errors['errors'][] = $error;
         }
-        if (array_key_exists("acceess", $body)) {
-            $acceess = $body['acceess'];
-            if(!is_int($acceess)){
-                $error = ["acceess" => "the value must be a number "];
+        if (array_key_exists("access", $body)) {
+            $access = $body['access'];
+            if(!is_int($access)){
+                $error = ["access" => "the value must be a number "];
                 $this->errors['errors'][] = $error;
             }
-            if(intval($acceess) >= 5){
-                $error = ["acceess" => "impossible access $acceess "];
+            if(intval($access) >= 5){
+                $error = ["access" => "impossible access $access "];
                 $this->errors['errors'][] = $error;
             }
 

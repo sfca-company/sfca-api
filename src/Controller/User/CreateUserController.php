@@ -3,13 +3,13 @@
 namespace App\Controller\User;
 
 use App\Entity\User;
-use App\Entity\Adress;
+use App\Entity\Address;
 use App\Service\User\UserService;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
 use App\Repository\Company\CompanyRepository;
-use App\Service\Adress\AdressService;
+use App\Service\Address\AddressService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,12 +30,12 @@ class CreateUserController extends AbstractController
         SecurityService $securityService,
         UserService $userService,
         EntityManagerInterface $em,
-        AdressService $adressService
+        AddressService $addressService
     ) {
         $this->securityService = $securityService;
         $this->userService = $userService;
         $this->em = $em;
-        $this->adressService = $adressService;
+        $this->addressService = $addressService;
     }
     /**
      * @Route("/api/users", name="create_users", methods={"POST"})
@@ -62,7 +62,7 @@ class CreateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
-        $acceess = $body['acceess'];
+        $access = $body['access'];
         if (!empty($userRepo->findByEmail($email))) {
             return $this->json([
                 "body" => ["errors" => ["email existant"]],
@@ -78,7 +78,7 @@ class CreateUserController extends AbstractController
         $user->setPassword($hashedPassword);
         $user->setEmail($email);
         $user->setRoles($this->userService->validatorRoles($roles));
-        $user->setAcceess($acceess);
+        $user->setAccess($access);
         if (is_array($companies)) {
             foreach ($companies as $companyId) {
                 $company = $companyRepo->findOneBy(["id"=>$companyId]);
@@ -114,18 +114,18 @@ class CreateUserController extends AbstractController
             $error = ["companies" => "empty"];
             $this->errors['errors'][] = $error;
         }
-        if (!array_key_exists("acceess", $body)) {
-            $error = ["acceess" => "empty"];
+        if (!array_key_exists("access", $body)) {
+            $error = ["access" => "empty"];
             $this->errors['errors'][] = $error;
         }
-        if (array_key_exists("acceess", $body)) {
-            $acceess = $body['acceess'];
-            if(!is_int($acceess)){
-                $error = ["acceess" => "the value must be a number "];
+        if (array_key_exists("access", $body)) {
+            $access = $body['access'];
+            if(!is_int($access)){
+                $error = ["access" => "the value must be a number "];
                 $this->errors['errors'][] = $error;
             }
-            if(intval($acceess) >= 5){
-                $error = ["acceess" => "impossible access $acceess "];
+            if(intval($access) >= 5){
+                $error = ["access" => "impossible access $access "];
                 $this->errors['errors'][] = $error;
             }
 

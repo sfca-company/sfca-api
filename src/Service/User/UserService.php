@@ -4,31 +4,31 @@ namespace App\Service\User;
 
 use ErrorException;
 use App\Entity\User;
-use App\Service\Adress\AdressService;
+use App\Service\Address\AddressService;
 use App\Service\PhoneNumber\PhoneNumberService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserService
 {
-    private $adressService;
+    private $addressService;
     private $phoneNumberService;
     const ROLE_PROSPECT = "ROLE_PROSPECT";
     const ROLE_ADMIN = "ROLE_ADMIN";
     const ROLE_CLIENT = "ROLE_CLIENT";
 
-    const ACCEESS_ALL = 1; // Permet d'avoir tous les droits
-    const ACCEESS_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
-    const ACCEESS_CREATE = 3; // Permet d'avoir le READ + CREATE
-    const ACCEESS_READ = 4; // Permet d'avoir le read
+    const ACCESS_ALL = 1; // Permet d'avoir tous les droits
+    const ACCESS_UPDATE = 2; // Permet d'avoir le READ + CREATE + UPDATE
+    const ACCESS_CREATE = 3; // Permet d'avoir le READ + CREATE
+    const ACCESS_READ = 4; // Permet d'avoir le read
 
     const ARRAY_ROLES = [UserService::ROLE_PROSPECT, UserService::ROLE_ADMIN, UserService::ROLE_CLIENT];
-    const ARRAY_ACCEESS = [UserService::ACCEESS_ALL, UserService::ACCEESS_UPDATE, UserService::ACCEESS_CREATE, UserService::ACCEESS_READ];
+    const ARRAY_ACCESS = [UserService::ACCESS_ALL, UserService::ACCESS_UPDATE, UserService::ACCESS_CREATE, UserService::ACCESS_READ];
     public function __construct(
-        AdressService $adressService,
+        AddressService $addressService,
         PhoneNumberService $phoneNumberService
     ) {
-        $this->adressService = $adressService;
+        $this->addressService = $addressService;
         $this->phoneNumberService = $phoneNumberService;
     }
     public function ressourceRightsGetUser(User $user, User $userRequest): ?JsonResponse
@@ -114,8 +114,8 @@ class UserService
         if (array_key_exists("lastName", $body)) {
             $user->setLastName($body["lastName"]);
         }
-        if (array_key_exists("dateOfBith", $body)) {
-            $user->setDateOfBith(new \Datetime($body["dateOfBith"]));
+        if (array_key_exists("dateOfBirth", $body)) {
+            $user->setDateOfBirth(new \Datetime($body["dateOfBirth"]));
         }
         if (array_key_exists("profession", $body)) {
             $user->setProfession($body["profession"]);
@@ -123,9 +123,9 @@ class UserService
         if (array_key_exists("notes", $body)) {
             $user->setNotes($body["notes"]);
         }
-        $adress = $this->adressService->create($body);
-        if (!empty($adress)) {
-            $user->setAdress($adress);
+        $address = $this->addressService->create($body);
+        if (!empty($address)) {
+            $user->setAddress($address);
         }
         $phoneNumber = $this->phoneNumberService->create($body);
         if (!empty($phoneNumber)) {
@@ -149,8 +149,8 @@ class UserService
         return UserService::ARRAY_ROLES;
     }
 
-    public function getAcceess(): array
+    public function getAccess(): array
     {
-        return UserService::ARRAY_ACCEESS;
+        return UserService::ARRAY_ACCESS;
     }
 }

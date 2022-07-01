@@ -54,12 +54,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/api/users/acceess", name="get_acceess", methods={"GET"})
+     * @Route("/api/users/access", name="get_access", methods={"GET"})
      */
-    public function getAcceess(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
+    public function getAccess(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
     {
 
-        $json = $serializer->serialize(['body' => $this->userService->getAcceess(), 'code' => Response::HTTP_OK], 'json');
+        $json = $serializer->serialize(['body' => $this->userService->getAccess(), 'code' => Response::HTTP_OK], 'json');
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
