@@ -34,8 +34,8 @@ class AddressService
     public function create(array $body) :?Address
     {
         $address = null;
-        if(array_key_exists("asdress",$body)){
-            $addressBody = $body['adsress'];
+        if(array_key_exists("address",$body)){
+            $addressBody = $body['address'];
             $address = $this->serializer->deserialize(
                 json_encode($addressBody),
                 Address::class,
