@@ -19,25 +19,25 @@ class Contact
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"company:read","contact:read","contact:write"})
+     * @Groups({"company:read","contact:read","contact:write","contact:lister"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"company:read","contact:read","contact:write"})
+     * @Groups({"company:read","contact:read","contact:write","contact:lister"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"company:read","contact:read","contact:write"})
+     * @Groups({"company:read","contact:read","contact:write","contact:lister"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"company:read","contact:read","contact:write"})
+     * @Groups({"company:read","contact:read","contact:write","contact:lister"})
      */
     private $dateOfBirth;
 

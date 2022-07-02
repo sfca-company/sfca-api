@@ -2,6 +2,7 @@
 
 namespace App\Repository\Contact;
 
+use App\Entity\Company\Company;
 use App\Entity\Contact\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,4 +48,17 @@ class ContactRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * @return Contact[] Returns an array of Contact objects
+     */
+    public function findByCompany(Company $company)
+    {
+        return $this->createQueryBuilder('contact')
+            ->andWhere('contact.company = :company')
+            ->setParameter('company', $company)
+            ->orderBy('contact.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

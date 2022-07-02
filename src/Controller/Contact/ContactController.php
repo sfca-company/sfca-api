@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
 use App\Repository\Company\CompanyRepository;
 use App\Repository\Contact\ContactRepository;
+use App\Service\Company\CompanyService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,19 +24,21 @@ class ContactController extends AbstractController
     private $errors;
     private $securityService;
     private $contactService;
-
+    private $companyService;
 
     public function __construct(
         EntityManagerInterface $em,
         SerializerInterface $serializer,
         SecurityService $securityService,
-        ContactService $contactService
+        ContactService $contactService,
+        CompanyService $companyService
     ) {
         $this->em = $em;
         $this->serializer = $serializer;
         $this->errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST];
         $this->securityService = $securityService;
         $this->contactService = $contactService;
+        $this->companyService = $companyService;
     }
     /**
      * @Route("/api/contact", name="get_all_contact", methods={"GET"})
@@ -71,6 +74,29 @@ class ContactController extends AbstractController
         $json = $this->serializer->serialize(['body' => $contact, 'code' => Response::HTTP_OK], 'json', ['groups' => 'contact:read']);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * @Route("/api/contact/compagnies/{id}", name="get_contact_companies", methods={"GET"})
+     */
+    public function getByCompagnies($id,CompanyRepository $companyRepo,ContactRepository $contactRepo){
+        $company = $companyRepo->findOneBy(['id' => $id]);
+        if (empty($company)) {
+            array_push($this->errors['errors'], ['id' => 'company not found']);
+            return new JsonResponse($this->errors, Response::HTTP_BAD_REQUEST, [], false);
+        }
+        $errors = $this->companyService->ressourceRightsGetCompany($this->getUser(),$company);
+        $errorsProspect = $this->securityService->forbiddenProspect($this->getUser());
+        if($errors instanceof JsonResponse){
+            return $errors;
+        }
+        if($errorsProspect instanceof JsonResponse){
+            return $errorsProspect;
+        }
+        $result = $contactRepo->findByCompany($company);
+        $json = $this->serializer->serialize(["body"=>$result,"code"=>Response::HTTP_OK],"json",["groups"=>"contact:lister"]);
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
+    }
+
 
     /**
      * @Route("/api/contact", name="create_contact", methods={"POST"})

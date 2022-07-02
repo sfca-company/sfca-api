@@ -46,9 +46,9 @@ class UserController extends AbstractController
     /**
      * @Route("/api/users/roles", name="get_roles", methods={"GET"})
      */
-    public function getRoles(UserRepository $userRepo, SerializerInterface $serializer): JsonResponse
+    public function getRoles(SerializerInterface $serializer): JsonResponse
     {
-
+     
         $json = $serializer->serialize(['body' => $this->userService->getRoles(), 'code' => Response::HTTP_OK], 'json');
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
