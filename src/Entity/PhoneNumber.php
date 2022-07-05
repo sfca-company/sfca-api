@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Company\Company;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PhoneNumberRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -36,6 +37,11 @@ class PhoneNumber
      *  
      */
     private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Company::class, inversedBy="phoneNumbers")
+     */
+    private $company;
 
     public function getId(): ?int
     {
@@ -74,6 +80,18 @@ class PhoneNumber
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
 
         return $this;
     }

@@ -15,49 +15,49 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user:read","adress:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $address1;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $address2;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $address3;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $state;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"user:read","address:write"})
+     * @Groups({"user:read","address:write","company:read"})
      */
     private $postalCode;
 

@@ -2,7 +2,9 @@
 
 namespace App\Entity\Company;
 
+use App\Entity\Address;
 use App\Entity\Contact\Contact;
+use App\Entity\PhoneNumber;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -40,10 +42,65 @@ class Company
      */
     private $users;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Address::class, cascade={"persist", "remove"})
+     *  @Groups({"company:read","company:write"})
+     */
+    private $address;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"company:read","company:write"})
+     */
+    private $linkSociete;
+
+    /**
+     * @ORM\Column(type="string", length=14, nullable=true)
+     * @Groups({"company:read","company:write"})
+     */
+    private $siret;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"company:read","company:write"})
+     */
+    private $citySiret;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"company:read","company:write"})
+     */
+    private $orias;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"company:read","company:write"})
+     */
+    private $webSite;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"company:read","company:write"})
+     */
+    private $currency;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PhoneNumber::class, mappedBy="company")
+     * @Groups({"company:read","company:write"})
+     */
+    private $phoneNumbers;
+
+    /**
+     * @ORM\OneToOne(targetEntity=PhoneNumber::class, cascade={"persist", "remove"})
+     * @Groups({"company:read","company:write"})
+     */
+    private $phoneNumberFavorite;
+
     public function __construct()
     {
         $this->contacts = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->phoneNumbers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -116,6 +173,132 @@ class Company
         if ($this->users->removeElement($user)) {
             $user->removeCompany($this);
         }
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getLinkSociete(): ?string
+    {
+        return $this->linkSociete;
+    }
+
+    public function setLinkSociete(?string $linkSociete): self
+    {
+        $this->linkSociete = $linkSociete;
+
+        return $this;
+    }
+
+    public function getSiret(): ?string
+    {
+        return $this->siret;
+    }
+
+    public function setSiret(?string $siret): self
+    {
+        $this->siret = $siret;
+
+        return $this;
+    }
+
+    public function getCitySiret(): ?string
+    {
+        return $this->citySiret;
+    }
+
+    public function setCitySiret(?string $citySiret): self
+    {
+        $this->citySiret = $citySiret;
+
+        return $this;
+    }
+
+    public function getOrias(): ?string
+    {
+        return $this->orias;
+    }
+
+    public function setOrias(?string $orias): self
+    {
+        $this->orias = $orias;
+
+        return $this;
+    }
+
+    public function getWebSite(): ?string
+    {
+        return $this->webSite;
+    }
+
+    public function setWebSite(?string $webSite): self
+    {
+        $this->webSite = $webSite;
+
+        return $this;
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(?string $currency): self
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PhoneNumber>
+     */
+    public function getPhoneNumbers(): Collection
+    {
+        return $this->phoneNumbers;
+    }
+
+    public function addPhoneNumber(PhoneNumber $phoneNumber): self
+    {
+        if (!$this->phoneNumbers->contains($phoneNumber)) {
+            $this->phoneNumbers[] = $phoneNumber;
+            $phoneNumber->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoneNumber(PhoneNumber $phoneNumber): self
+    {
+        if ($this->phoneNumbers->removeElement($phoneNumber)) {
+            // set the owning side to null (unless already changed)
+            if ($phoneNumber->getCompany() === $this) {
+                $phoneNumber->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getphoneNumberFavorite(): ?PhoneNumber
+    {
+        return $this->phoneNumberFavorite;
+    }
+
+    public function setPhoneNumberFavorite(?PhoneNumber $phoneNumberFavorite): self
+    {
+        $this->phoneNumberFavorite = $phoneNumberFavorite;
 
         return $this;
     }
