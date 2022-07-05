@@ -31,4 +31,19 @@ class CurlService
 
         return $result;
     }
+
+    public function post($url,?array $body = null,?array $headers = null)
+    {
+        curl_setopt($this->ch, CURLOPT_URL,$url);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1 );
+        curl_setopt($this->ch, CURLOPT_POST,           1 );
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS,$body); 
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER,     array('Content-Type: text/plain')); 
+        //Désactiver la vérification du certificat puisque waytolearnx utilise HTTPS
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        //Exécutez la requête 
+        $result = curl_exec($this->ch);
+
+        return $result;
+    }
 }
