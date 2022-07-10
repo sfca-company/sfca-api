@@ -109,6 +109,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $phoneNumberFavorite;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Company::class)
+     */
+    private $companyFavorite;
+
     public function __construct()
     {
         $this->companies = new ArrayCollection();
@@ -350,6 +355,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoneNumberFavorite(?PhoneNumber $phoneNumberFavorite): self
     {
         $this->phoneNumberFavorite = $phoneNumberFavorite;
+
+        return $this;
+    }
+
+    public function getCompanyFavorite(): ?Company
+    {
+        return $this->companyFavorite;
+    }
+
+    public function setCompanyFavorite(?Company $companyFavorite): self
+    {
+        $this->companyFavorite = $companyFavorite;
 
         return $this;
     }

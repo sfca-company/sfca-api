@@ -106,6 +106,13 @@ class UserService
         return $acceptedRoles;
     }
 
+    /**
+     * Permet d'ajouter des champs non obligatoire sur l'entité User
+     *
+     * @param array $body
+     * @param User $user
+     * @return User
+     */
     public function addNonMandatoryAttribute(array $body, User $user): User
     {
         if (array_key_exists("firstName", $body)) {

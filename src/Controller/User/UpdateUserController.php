@@ -61,8 +61,9 @@ class UpdateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
+        $companyFavorite = $body['companyFavorite'];
         $access = $body['access'];
-        
+
         if (!empty($userRepo->findByEmail($email))) {
             if ($user->getEmail() !== $email) {
                 return $this->json([
@@ -87,7 +88,8 @@ class UpdateUserController extends AbstractController
                 }
             }
         }
-        $user = $this->userService->addNonMandatoryAttribute($body,$user);
+        $user->setCompanyFavorite($companyRepo->findOneBy(["id"=>$companyFavorite]));
+        $user = $this->userService->addNonMandatoryAttribute($body, $user);
         $this->em->persist($user);
         $this->em->flush();
         $this->em->refresh($user);
@@ -154,18 +156,21 @@ class UpdateUserController extends AbstractController
             $error = ["access" => "empty"];
             $this->errors['errors'][] = $error;
         }
+        //companyFavorite
+        if (!array_key_exists("companyFavorite", $body)) {
+            $error = ["companyFavorite" => "empty"];
+            $this->errors['errors'][] = $error;
+        }
         if (array_key_exists("access", $body)) {
             $access = $body['access'];
-            if(!is_int($access)){
+            if (!is_int($access)) {
                 $error = ["access" => "the value must be a number "];
                 $this->errors['errors'][] = $error;
             }
-            if(intval($access) >= 5){
+            if (intval($access) >= 5) {
                 $error = ["access" => "impossible access $access "];
                 $this->errors['errors'][] = $error;
             }
-
         }
     }
-
 }

@@ -62,6 +62,7 @@ class CreateUserController extends AbstractController
         $email = $body['email'];
         $roles = $body['roles'];
         $companies = $body['companies'];
+        $companyFavorite = $body['companyFavorite'];
         $access = $body['access'];
         if (!empty($userRepo->findByEmail($email))) {
             return $this->json([
@@ -87,6 +88,7 @@ class CreateUserController extends AbstractController
                 }
             }
         }
+        $user->setCompanyFavorite($companyRepo->findOneBy(["id"=>$companyFavorite]));
         $user = $this->userService->addNonMandatoryAttribute($body,$user);
         
         $this->em->persist($user);
@@ -114,6 +116,12 @@ class CreateUserController extends AbstractController
             $error = ["companies" => "empty"];
             $this->errors['errors'][] = $error;
         }
+        //companyFavorite
+        if (!array_key_exists("companyFavorite", $body)) {
+            $error = ["companyFavorite" => "empty"];
+            $this->errors['errors'][] = $error;
+        }
+
         if (!array_key_exists("access", $body)) {
             $error = ["access" => "empty"];
             $this->errors['errors'][] = $error;
