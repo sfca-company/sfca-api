@@ -111,6 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Company::class)
+     *  @Groups({"user:read"})
      */
     private $companyFavorite;
 
