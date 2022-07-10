@@ -5,6 +5,7 @@ namespace App\Service\Company;
 use ErrorException;
 use App\Entity\User;
 use App\Entity\Company\Company;
+use App\Service\Document\DocumentService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,11 +16,14 @@ class CompanyService
 
 
     private $securityService;
+    private $documentService;
 
     public function __construct(
-        SecurityService $securityService
+        SecurityService $securityService,
+        DocumentService $documentService
     ) {
         $this->securityService = $securityService;
+        $this->documentService = $documentService;
     }
 
     public function ressourceRightsAdmin(User $user): ?JsonResponse
@@ -47,7 +51,7 @@ class CompanyService
      * @param ?string $method
      * @return JsonResponse|null
      */
-    public function ressourceRightsGetCompany(User $user, Company $company,?string $method = null): ?JsonResponse
+    public function ressourceRightsGetCompany(User $user, Company $company, ?string $method = null): ?JsonResponse
     {
         try {
             if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
@@ -79,7 +83,7 @@ class CompanyService
                     "code" => Response::HTTP_BAD_REQUEST
                 ]);
             }
-            return $this->securityService->ressourceAcces($user,$method);
+            return $this->securityService->ressourceAcces($user, $method);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'exception' => $e->getMessage(),
@@ -88,8 +92,21 @@ class CompanyService
         }
     }
 
-    public function addLogo(Company $Company,array $body)
+    /**
+     * Permet de rajouter un logo à un cabinet
+     *
+     * @param Company $company
+     * @param array $body
+     * @return Company
+     */
+    public function addLogo(Company $company, array $body): Company
     {
+        if (array_key_exists("logo", $body)) {
+            if (!empty($body['logo'])) {
+                $this->documentService->create($body['logo'], $company);
+            }
+        }
 
+        return $company;
     }
 }

@@ -86,8 +86,13 @@ class CompanyController extends AbstractController
             'json',
             ['groups' => 'company:write']
         );
+
         $this->em->persist($company);
         $this->em->flush();
+
+        $body = json_decode($request->getContent(),true);
+        $company = $this->companyService->addLogo($company,$body);
+        $this->em->refresh($company);
         return new JsonResponse($this->serializer->serialize(['body' => $company, 'code' => Response::HTTP_CREATED], 'json', ["groups" => "company:read"]), Response::HTTP_CREATED, [], true);
     }
 
@@ -121,6 +126,11 @@ class CompanyController extends AbstractController
             );
             $this->em->persist($company);
             $this->em->flush();
+            
+            $body = json_decode($request->getContent(),true);
+            $company = $this->companyService->addLogo($company,$body);
+            $this->em->refresh($company);
+
             return new JsonResponse($this->serializer->serialize(['body' => $company, 'code' => Response::HTTP_OK], 'json', ["groups" => "company:read"]), Response::HTTP_OK, [], true);
         } catch (\Exception $e) {
             return new JsonResponse($e->getMessage(), Response::HTTP_BAD_REQUEST, [], false);

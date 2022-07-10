@@ -6,7 +6,7 @@ use App\Entity\Company\Company;
 use App\Entity\Contact\Contact;
 use App\Entity\Document\Document;
 use Doctrine\ORM\EntityManagerInterface;
-
+use Exception;
 
 class DocumentService
 {
@@ -57,36 +57,50 @@ class DocumentService
         $document->setName($body['name']);
         $document->setTypeMime($body['typeMime']);
         $document->setExtension($body['extension']);
-
-        switch($object){
-            case $object instanceof Contact :
-                $contact = $object;
-                $document->setContact($contact);
-                break;
-            case $object instanceof Company :
-                $company = $object;
-                $company->setLogo($document);
-                
-        }
-       
-       
+        $nameOfDossier = null;
         $base64 = $body['base64'];
         $doc = base64_decode($base64);
+
+        switch ($object) {
+            case $object instanceof Contact:
+                $nameOfDossier = "contact";
+                $contact = $object;
+                $document->setContact($contact);
+                $dossier = "img/$nameOfDossier/" . $object->getId();
+                if (!file_exists($dossier)) {
+                    mkdir($dossier);
+                }
+                $dossier = "img/$nameOfDossier/" . $object->getId() . "/" . $document->getId();
+                if (!file_exists($dossier)) {
+                    mkdir($dossier);
+                }
+                $url = "$dossier/" . $document->getName() . "." . $document->getExtension();
+                break;
+            case $object instanceof Company:
+                $nameOfDossier = "company";
+                $company = $object;
+                $company->setLogo($document);
+                $dossier = "img/$nameOfDossier/logo/" . $company->getId();
+                if (!file_exists($dossier)) {
+                    mkdir($dossier);
+                }
+                $dossier = "img/$nameOfDossier/logo/" . $company->getId();
+                if (!file_exists($dossier)) {
+                    mkdir($dossier);
+                }
+                $url = "$dossier/" . $document->getName() . "." . $document->getExtension();
+                break;
+                default : 
+                new Exception("error switch ged");
+        }
        
-        $dossier = "img/".get_class($object) . "/" . $object->getId();
-        if (!file_exists($dossier)) {
-            mkdir($dossier);
-        }
-        $dossier = "img/".get_class($object) . "/" . $object->getId() . "/" . $document->getId();
-        if (!file_exists($dossier)) {
-            mkdir($dossier);
-        }
-        $url = "$dossier/" . $document->getName() . "." . $document->getExtension();
 
         $document->setUrl($url);
         file_put_contents($url, $doc);
         $document->setTaille(filesize($url));
         $this->em->persist($document);
+        $this->em->flush();
+        $this->em->persist($object);
         $this->em->flush();
         return $document;
     }

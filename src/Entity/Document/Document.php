@@ -16,13 +16,13 @@ class Document
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"document:read","contact:read"})
+     * @Groups({"document:read","contact:read","company:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *  @Groups({"document:read","contact:read"})
+     *  @Groups({"document:read","contact:read","company:read"})
      */
     private $name;
 
@@ -33,19 +33,19 @@ class Document
 
     /**
      * @ORM\Column(type="string", length=255)
-     *  @Groups({"document:read","contact:read"})
+     *  @Groups({"document:read","contact:read","company:read"})
      */
     private $typeMime;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"document:read","contact:read"})
+     *  @Groups({"document:read","contact:read","company:read"})
      */
     private $extension;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"document:read","contact:read"})
+     *  @Groups({"document:read","contact:read","company:read"})
      */
     private $taille;
 
