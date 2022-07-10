@@ -4,6 +4,7 @@ namespace App\Entity\Company;
 
 use App\Entity\Address;
 use App\Entity\Contact\Contact;
+use App\Entity\Document\Document;
 use App\Entity\PhoneNumber;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -95,6 +96,12 @@ class Company
      * @Groups({"company:read","company:write"})
      */
     private $phoneNumberFavorite;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Document::class, cascade={"persist", "remove"})
+     *  @Groups({"company:read"})
+     */
+    private $logo;
 
     public function __construct()
     {
@@ -299,6 +306,18 @@ class Company
     public function setPhoneNumberFavorite(?PhoneNumber $phoneNumberFavorite): self
     {
         $this->phoneNumberFavorite = $phoneNumberFavorite;
+
+        return $this;
+    }
+
+    public function getLogo(): ?Document
+    {
+        return $this->logo;
+    }
+
+    public function setLogo(?Document $logo): self
+    {
+        $this->logo = $logo;
 
         return $this;
     }

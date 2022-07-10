@@ -87,4 +87,9 @@ class CompanyService
             ]);
         }
     }
+
+    public function addLogo(Company $Company,array $body)
+    {
+
+    }
 }

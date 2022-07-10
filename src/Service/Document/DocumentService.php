@@ -2,6 +2,7 @@
 
 namespace App\Service\Document;
 
+use App\Entity\Company\Company;
 use App\Entity\Contact\Contact;
 use App\Entity\Document\Document;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,26 +44,40 @@ class DocumentService
         return $errors;
     }
 
-    public function create(array $body, Contact $contact): Document
+    /**
+     * Permet de créer un document sur un contact
+     *
+     * @param array $body
+     * @param object $contact
+     * @return Document
+     */
+    public function create(array $body, object $object): Document
     {
-
         $document = new Document;
         $document->setName($body['name']);
         $document->setTypeMime($body['typeMime']);
         $document->setExtension($body['extension']);
-        $document->setUrl("tempory");
-        $document->setContact($contact);
+
+        switch($object){
+            case $object instanceof Contact :
+                $contact = $object;
+                $document->setContact($contact);
+                break;
+            case $object instanceof Company :
+                $company = $object;
+                $company->setLogo($document);
+                
+        }
+       
+       
         $base64 = $body['base64'];
         $doc = base64_decode($base64);
-
-        $this->em->persist($document);
-        $this->em->flush();
-
-        $dossier = "img/" . $contact->getId();
+       
+        $dossier = "img/".get_class($object) . "/" . $object->getId();
         if (!file_exists($dossier)) {
             mkdir($dossier);
         }
-        $dossier = "img/" . $contact->getId() . "/" . $document->getId();
+        $dossier = "img/".get_class($object) . "/" . $object->getId() . "/" . $document->getId();
         if (!file_exists($dossier)) {
             mkdir($dossier);
         }
@@ -75,7 +90,6 @@ class DocumentService
         $this->em->flush();
         return $document;
     }
-
 
 
     public function searchFile(Document $document): string
