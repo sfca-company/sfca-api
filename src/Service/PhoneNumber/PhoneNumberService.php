@@ -88,7 +88,7 @@ class PhoneNumberService
     }
 
     /**
-     * Permet de créer une address ou de l'update
+     * Permet de créer une PhoneNumber ou de l'update
      *
      * @param array $body
      * @return PhoneNumber|null
