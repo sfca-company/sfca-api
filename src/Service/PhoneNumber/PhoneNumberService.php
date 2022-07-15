@@ -91,7 +91,7 @@ class PhoneNumberService
      * Permet de créer une address ou de l'update
      *
      * @param array $body
-     * @return Address|null
+     * @return PhoneNumber|null
      */
     public function update(array $body): ?PhoneNumber
     {
