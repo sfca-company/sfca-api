@@ -105,7 +105,7 @@ class PhoneNumberService
                 $phoneNumberBody = $body['phoneNumber'];
                 $phoneNumber = $this->serializer->deserialize(
                     json_encode($phoneNumberBody),
-                    Address::class,
+                    PhoneNumber::class,
                     'json',
                     [
                         'groups' => 'phoneNumber:write',
@@ -126,7 +126,7 @@ class PhoneNumberService
                 $phoneNumberBody = $body['phoneNumberFavorite'];
                 $phoneNumber = $this->serializer->deserialize(
                     json_encode($phoneNumberBody),
-                    Address::class,
+                    PhoneNumber::class,
                     'json',
                     [
                         'groups' => 'phoneNumber:write',
