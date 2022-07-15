@@ -134,7 +134,7 @@ class UserService
         if (!empty($address)) {
             $user->setAddress($address);
         }
-        $phoneNumber = $this->phoneNumberService->create($body);
+        $phoneNumber = $this->phoneNumberService->update($body);
         if (!empty($phoneNumber)) {
             $user->setPhoneNumberFavorite($phoneNumber);
         }
