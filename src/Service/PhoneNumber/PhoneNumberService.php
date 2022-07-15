@@ -116,6 +116,27 @@ class PhoneNumberService
             }
             return $this->create($body);
         }
+
+        if (array_key_exists("phoneNumberFavorite", $body)) {
+            if (array_key_exists("id", $body["phoneNumberFavorite"])) {
+                $phoneNumber = $this->phoneNumberRepo->findOneBy(["id" => $body["phoneNumberFavorite"]["id"]]);
+                if (empty($phoneNumber)) {
+                    return $this->create($body);
+                }
+                $phoneNumberBody = $body['phoneNumberFavorite'];
+                $phoneNumber = $this->serializer->deserialize(
+                    json_encode($phoneNumberBody),
+                    Address::class,
+                    'json',
+                    [
+                        'groups' => 'phoneNumber:write',
+                        'object_to_populate' => $phoneNumber
+                    ]
+                );
+                return $phoneNumber;
+            }
+            return $this->create($body);
+        }
         return $phoneNumber;
     }
 
