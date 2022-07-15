@@ -93,7 +93,7 @@ class PhoneNumberService
      * @param array $body
      * @return Address|null
      */
-    public function update(array $body): ?Address
+    public function update(array $body): ?PhoneNumber
     {
         $phoneNumber = null;
         if (array_key_exists("phoneNumber", $body)) {
