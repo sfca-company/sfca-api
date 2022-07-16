@@ -123,16 +123,6 @@ class PhoneNumberService
                 if (empty($phoneNumber)) {
                     return $this->create($body);
                 }
-                $phoneNumberBody = $body['phoneNumberFavorite'];
-                $phoneNumber = $this->serializer->deserialize(
-                    json_encode($phoneNumberBody),
-                    PhoneNumber::class,
-                    'json',
-                    [
-                        'groups' => 'phoneNumber:write',
-                        'object_to_populate' => $phoneNumber
-                    ]
-                );
                 return $phoneNumber;
             }
             return $this->create($body);
