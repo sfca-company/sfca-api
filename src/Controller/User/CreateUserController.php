@@ -97,10 +97,10 @@ class CreateUserController extends AbstractController
         
         $this->em->persist($user);
         $this->em->flush();
-        $phoneNumber = $this->phoneNumberService->update($body);
-        if (!empty($phoneNumber)) {
-            $user->setPhoneNumberFavorite($phoneNumber);
-        }
+        // $phoneNumber = $this->phoneNumberService->update($body);
+        // if (!empty($phoneNumber)) {
+        //     $user->setPhoneNumberFavorite($phoneNumber);
+        // }
         $json = $serializer->serialize(["body" => $user, "code" => Response::HTTP_OK], 'json', ["groups" => "user:read"]);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
