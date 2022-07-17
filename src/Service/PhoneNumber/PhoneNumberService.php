@@ -121,11 +121,11 @@ class PhoneNumberService
             if (array_key_exists("id", $body["phoneNumberFavorite"])) {
                 $phoneNumber = $this->phoneNumberRepo->findOneBy(["id" => $body["phoneNumberFavorite"]["id"]]);
                 if (empty($phoneNumber)) {
-                    return $this->create($body);
+                   // return $this->create($body);
                 }
                 return $phoneNumber;
             }
-            return $this->create($body);
+           // return $this->create($body);
         }
         return $phoneNumber;
     }

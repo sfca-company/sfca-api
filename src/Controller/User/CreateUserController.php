@@ -93,14 +93,10 @@ class CreateUserController extends AbstractController
             }
         }
         $user->setCompanyFavorite($companyRepo->findOneBy(["id"=>$companyFavorite]));
-        $user = $this->userService->addNonMandatoryAttribute($body,$user);
+        $user = $this->userService->addNonMandatoryAttribute($body,$user,$request->getMethod());
         
         $this->em->persist($user);
         $this->em->flush();
-        // $phoneNumber = $this->phoneNumberService->update($body);
-        // if (!empty($phoneNumber)) {
-        //     $user->setPhoneNumberFavorite($phoneNumber);
-        // }
         $json = $serializer->serialize(["body" => $user, "code" => Response::HTTP_OK], 'json', ["groups" => "user:read"]);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }

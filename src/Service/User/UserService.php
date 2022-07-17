@@ -106,14 +106,16 @@ class UserService
         return $acceptedRoles;
     }
 
+
     /**
-     * Permet d'ajouter des champs non obligatoire sur l'entité User
+     *  Permet d'ajouter des champs non obligatoire sur l'entité User
      *
      * @param array $body
      * @param User $user
+     * @param string|null $method HTTP
      * @return User
      */
-    public function addNonMandatoryAttribute(array $body, User $user): User
+    public function addNonMandatoryAttribute(array $body, User $user, ?string $method = null): User
     {
         if (array_key_exists("firstName", $body)) {
             $user->setFirstName($body["firstName"]);
@@ -134,10 +136,13 @@ class UserService
         if (!empty($address)) {
             $user->setAddress($address);
         }
-        $phoneNumber = $this->phoneNumberService->update($body);
-        if (!empty($phoneNumber)) {
-            $user->setPhoneNumberFavorite($phoneNumber);
+        if ($method !== "POST") {
+            $phoneNumber = $this->phoneNumberService->update($body);
+            if (!empty($phoneNumber)) {
+                $user->setPhoneNumberFavorite($phoneNumber);
+            }
         }
+
         $phoneNumbers = $user->getPhoneNumbers();
         foreach ($phoneNumbers as $number) {
             $user->removePhoneNumber($number);
@@ -146,6 +151,9 @@ class UserService
         if (!empty($phoneNumbers)) {
             foreach ($phoneNumbers as $phoneNumber) {
                 $user->addPhoneNumber($phoneNumber);
+            }
+            if ($method === "POST") {
+                $user->setPhoneNumberFavorite($phoneNumber);
             }
         }
         return $user;
