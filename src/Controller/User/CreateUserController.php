@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Security\SecurityService;
 use App\Repository\Company\CompanyRepository;
 use App\Service\Address\AddressService;
+use App\Service\PhoneNumber\PhoneNumberService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,16 +27,19 @@ class CreateUserController extends AbstractController
     private $userService;
     private $errors = ["errors" => [], "code" => Response::HTTP_BAD_REQUEST, "exception" => []];
     private $em;
+    private $phoneNumberService;
     public function __construct(
         SecurityService $securityService,
         UserService $userService,
         EntityManagerInterface $em,
-        AddressService $addressService
+        AddressService $addressService,
+        PhoneNumberService $phoneNumberService
     ) {
         $this->securityService = $securityService;
         $this->userService = $userService;
         $this->em = $em;
         $this->addressService = $addressService;
+        $this->phoneNumberService = $phoneNumberService;
     }
     /**
      * @Route("/api/users", name="create_users", methods={"POST"})
@@ -93,6 +97,10 @@ class CreateUserController extends AbstractController
         
         $this->em->persist($user);
         $this->em->flush();
+        $phoneNumber = $this->phoneNumberService->update($body);
+        if (!empty($phoneNumber)) {
+            $user->setPhoneNumberFavorite($phoneNumber);
+        }
         $json = $serializer->serialize(["body" => $user, "code" => Response::HTTP_OK], 'json', ["groups" => "user:read"]);
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
